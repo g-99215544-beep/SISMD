@@ -69,11 +69,11 @@ export function jana(kat) {
   if (kat === 'L12') {
     state.cL++;
     localStorage.setItem('md3_cL', state.cL);
-    return 'L12' + String(state.cL).padStart(4, '0');
+    return 'L' + String(state.cL).padStart(4, '0');
   } else {
     state.cP++;
     localStorage.setItem('md3_cP', state.cP);
-    return 'P12' + String(state.cP).padStart(4, '0');
+    return 'P' + String(state.cP).padStart(4, '0');
   }
 }
 
