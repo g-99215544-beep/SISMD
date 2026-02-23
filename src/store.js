@@ -3,13 +3,14 @@ import { ref, set, get, onValue } from 'firebase/database';
 
 // ── Local state ───────────────────────────────────────────────
 export const state = {
-  murid:  JSON.parse(localStorage.getItem('md3_murid')  || '[]'),
-  rekod:  JSON.parse(localStorage.getItem('md3_rekod')  || '[]'),
+  murid:  [],   // populated from Firebase on init
+  rekod:  [],   // populated from Firebase on init
   larian: JSON.parse(localStorage.getItem('md3_larian') ||
     '{"L12":{"s":"idle","mula":null,"tamat":null},"P12":{"s":"idle","mula":null,"tamat":null}}'),
   cL: parseInt(localStorage.getItem('md3_cL') || '0'),
   cP: parseInt(localStorage.getItem('md3_cP') || '0'),
-  apiKey:        localStorage.getItem('md3_ak') || '',
+  geminiKey:     '',   // loaded from Firebase /config
+  gsUrl:         '',   // loaded from Firebase /config
   fdAktif:       'semua',
   flbAktif:      'semua',
   prevData:      [],
@@ -22,8 +23,6 @@ export const state = {
 // ── localStorage helpers ──────────────────────────────────────
 function saveLocal() {
   try {
-    localStorage.setItem('md3_murid',  JSON.stringify(state.murid));
-    localStorage.setItem('md3_rekod',  JSON.stringify(state.rekod));
     localStorage.setItem('md3_larian', JSON.stringify(state.larian));
     localStorage.setItem('md3_cL', state.cL);
     localStorage.setItem('md3_cP', state.cP);
@@ -123,6 +122,12 @@ export function initFirebaseListeners(callbacks) {
     state.cP = snap.val().cP ?? state.cP;
     localStorage.setItem('md3_cL', state.cL);
     localStorage.setItem('md3_cP', state.cP);
+  });
+
+  onValue(ref(db, 'config'), snap => {
+    if (!snap.val()) return;
+    state.geminiKey = snap.val().geminiKey || '';
+    state.gsUrl     = snap.val().gsUrl     || '';
   });
 }
 
