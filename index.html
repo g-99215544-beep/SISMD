@@ -5,336 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SisMD — Sistem Merentas Desa</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #fafaf8;
-  --surface: #ffffff;
-  --surface2: #f4f3ef;
-  --surface3: #eceae3;
-  --ink: #1c1a14;
-  --ink2: #6b6454;
-  --ink3: #a09880;
-  --accent: #2d6a4f;
-  --accent-light: #d8f3dc;
-  --accent2: #b5451b;
-  --accent2-light: #fde8e0;
-  --blue: #1a4a8a;
-  --blue-light: #dce8f8;
-  --amber: #92600a;
-  --amber-light: #fef3cd;
-  --purple: #5e3a8a;
-  --purple-light: #ede5f8;
-  --border: #e2dfd6;
-  --border2: #ccc9be;
-  --shadow: 0 1px 4px rgba(28,26,20,0.06), 0 4px 16px rgba(28,26,20,0.04);
-  --shadow-lg: 0 8px 32px rgba(28,26,20,0.12);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--ink); font-family:'Outfit',sans-serif; min-height:100vh; }
-
-/* TOPBAR */
-.topbar {
-  background: var(--ink);
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.logo { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:4px; color:#fafaf8; }
-.logo em { color:#52b788; font-style:normal; }
-.nav { display:flex; gap:2px; }
-.nb {
-  padding: 6px 13px;
-  border-radius: 6px;
-  font-size: 0.77rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  color: rgba(250,250,248,0.5);
-  font-family: 'Outfit', sans-serif;
-  transition: all 0.15s;
-  display: flex; align-items: center; gap: 5px;
-}
-.nb:hover { background: rgba(255,255,255,0.1); color: #fafaf8; }
-.nb.active { background: rgba(255,255,255,0.15); color: #fafaf8; }
-
-/* PAGES */
-.page { display:none; padding:28px 24px; max-width:1080px; margin:0 auto; animation:fi 0.2s ease; }
-.page.active { display:block; }
-@keyframes fi { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-
-/* HEADINGS */
-.ph { font-family:'Bebas Neue',sans-serif; font-size:1.9rem; letter-spacing:2px; margin-bottom:3px; }
-.ps { color:var(--ink2); font-size:0.83rem; margin-bottom:22px; }
-
-/* CARDS */
-.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:var(--shadow); }
-.cl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--ink2); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
-
-/* GRIDS */
-.g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-
-/* FORM */
-.fl { display:flex; flex-direction:column; gap:12px; }
-label.lbl { font-size:0.74rem; font-weight:700; color:var(--ink2); display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
-.inp, .sel {
-  width:100%; padding:9px 13px;
-  background:var(--surface2); border:1.5px solid var(--border);
-  border-radius:8px; font-size:0.88rem; font-family:'Outfit',sans-serif;
-  color:var(--ink); outline:none; transition:border-color 0.15s, box-shadow 0.15s;
-}
-.inp:focus, .sel:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,106,79,0.1); }
-
-/* BUTTONS */
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:6px;
-  padding:9px 18px; border-radius:8px; font-size:0.85rem; font-weight:700;
-  cursor:pointer; border:none; font-family:'Outfit',sans-serif; transition:all 0.15s;
-}
-.btn:disabled { opacity:0.35; cursor:not-allowed; }
-.btn-dark { background:var(--ink); color:var(--bg); }
-.btn-dark:not(:disabled):hover { background:#2d2a20; }
-.btn-green { background:var(--accent); color:#fff; }
-.btn-green:not(:disabled):hover { background:#1e5038; }
-.btn-red { background:var(--accent2); color:#fff; }
-.btn-red:not(:disabled):hover { background:#9a3a16; }
-.btn-ghost { background:transparent; color:var(--ink); border:1.5px solid var(--border); }
-.btn-ghost:not(:disabled):hover { border-color:var(--border2); background:var(--surface2); }
-.btn-blue { background:var(--blue); color:#fff; }
-.btn-blue:not(:disabled):hover { background:#133d73; }
-.btn-full { width:100%; }
-.btn-lg { padding:12px 22px; font-size:0.95rem; }
-.btn-sm { padding:5px 11px; font-size:0.74rem; }
-
-/* BADGE */
-.badge {
-  display:inline-flex; align-items:center; padding:2px 9px;
-  border-radius:100px; font-size:0.68rem; font-weight:700;
-  font-family:'JetBrains Mono',monospace;
-}
-.bg-g { background:var(--accent-light); color:var(--accent); }
-.bg-r { background:var(--accent2-light); color:var(--accent2); }
-.bg-b { background:var(--blue-light); color:var(--blue); }
-.bg-a { background:var(--amber-light); color:var(--amber); }
-.bg-p { background:var(--purple-light); color:var(--purple); }
-.bg-x { background:var(--surface2); color:var(--ink2); }
-
-/* TABLE */
-.tw { overflow-x:auto; border-radius:8px; border:1px solid var(--border); }
-table { width:100%; border-collapse:collapse; font-size:0.83rem; }
-th { padding:9px 13px; text-align:left; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--ink2); background:var(--surface2); white-space:nowrap; }
-td { padding:11px 13px; border-bottom:1px solid var(--border); vertical-align:middle; }
-tr:last-child td { border-bottom:none; }
-tr:hover td { background:rgba(28,26,20,0.02); }
-.mono { font-family:'JetBrains Mono',monospace; font-size:0.78rem; }
-
-/* FILTER TABS */
-.ftabs { display:flex; gap:3px; background:var(--surface2); padding:3px; border-radius:8px; width:fit-content; margin-bottom:14px; border:1px solid var(--border); }
-.ftab { padding:6px 14px; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--ink2); font-family:'Outfit',sans-serif; transition:all 0.15s; }
-.ftab.active { background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-
-/* ALERT */
-.alert { padding:11px 15px; border-radius:8px; font-size:0.82rem; margin-bottom:14px; display:flex; align-items:flex-start; gap:8px; line-height:1.5; }
-.al-g { background:var(--accent-light); color:var(--accent); border:1px solid rgba(45,106,79,0.2); }
-.al-a { background:var(--amber-light); color:var(--amber); border:1px solid rgba(146,96,10,0.2); }
-.al-r { background:var(--accent2-light); color:var(--accent2); border:1px solid rgba(181,69,27,0.2); }
-.al-b { background:var(--blue-light); color:var(--blue); border:1px solid rgba(26,74,138,0.2); }
-
-/* STAT CHIPS */
-.chips { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
-.chip { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 18px; flex:1; min-width:100px; box-shadow:var(--shadow); }
-.cv { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:1px; line-height:1; }
-.ck { font-size:0.68rem; color:var(--ink2); margin-top:3px; text-transform:uppercase; letter-spacing:0.5px; }
-
-/* MODAL */
-.modal-bg { position:fixed; inset:0; background:rgba(28,26,20,0.5); z-index:300; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
-.modal-bg.open { display:flex; }
-.modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:26px; max-width:520px; width:100%; box-shadow:var(--shadow-lg); }
-.modal h3 { font-size:1.05rem; font-weight:800; margin-bottom:6px; }
-.modal p { font-size:0.82rem; color:var(--ink2); margin-bottom:16px; line-height:1.6; }
-.ma { display:flex; gap:8px; justify-content:flex-end; margin-top:18px; }
-
-/* TOAST */
-#toast { position:fixed; bottom:20px; right:20px; z-index:999; display:flex; flex-direction:column; gap:6px; pointer-events:none; }
-.ti { padding:10px 16px; border-radius:8px; font-size:0.82rem; font-weight:600; box-shadow:var(--shadow-lg); animation:tIn 0.25s ease; }
-.tok { background:var(--accent); color:#fff; }
-.terr { background:var(--accent2); color:#fff; }
-.tinf { background:var(--ink); color:var(--bg); }
-@keyframes tIn { from{transform:translateX(50px);opacity:0} to{transform:translateX(0);opacity:1} }
-
-/* ===== REGISTRATION SPECIFIC ===== */
-
-/* Step indicator */
-.steps { display:flex; align-items:center; gap:0; margin-bottom:24px; }
-.step { display:flex; align-items:center; gap:8px; flex:1; }
-.step:not(:last-child)::after { content:''; flex:1; height:2px; background:var(--border); margin:0 8px; }
-.step-dot {
-  width:28px; height:28px; border-radius:50%;
-  background:var(--surface2); border:2px solid var(--border);
-  display:flex; align-items:center; justify-content:center;
-  font-size:0.75rem; font-weight:700; color:var(--ink2); flex-shrink:0;
-  transition:all 0.2s;
-}
-.step-dot.done { background:var(--accent); border-color:var(--accent); color:#fff; }
-.step-dot.active { background:var(--ink); border-color:var(--ink); color:var(--bg); }
-.step-label { font-size:0.75rem; font-weight:600; color:var(--ink2); white-space:nowrap; }
-.step.active .step-label { color:var(--ink); }
-
-/* Upload zone */
-.upload-zone {
-  border:2px dashed var(--border2);
-  border-radius:12px;
-  padding:36px 24px;
-  text-align:center;
-  cursor:pointer;
-  transition:all 0.2s;
-  background:var(--surface2);
-  position:relative;
-}
-.upload-zone:hover, .upload-zone.drag { border-color:var(--accent); background:var(--accent-light); }
-.upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
-.upload-icon { font-size:2.5rem; margin-bottom:10px; }
-.upload-title { font-weight:700; font-size:0.95rem; margin-bottom:4px; }
-.upload-sub { font-size:0.78rem; color:var(--ink2); }
-
-/* Preview table wrapper */
-.preview-wrap {
-  border:1px solid var(--border);
-  border-radius:10px;
-  overflow:hidden;
-  max-height:340px;
-  overflow-y:auto;
-}
-
-/* Duplicate row highlight */
-tr.dup td { background:rgba(181,69,27,0.06) !important; }
-tr.dup td:first-child { border-left:3px solid var(--accent2); }
-
-/* School lookup */
-.lookup-box {
-  background:linear-gradient(135deg, #0f2d1a, #1a2a0f);
-  border-radius:14px;
-  padding:28px;
-  color:#d8f3dc;
-  text-align:center;
-}
-.lookup-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:3px; margin-bottom:6px; color:rgba(216,243,220,0.5); }
-.lookup-row { display:flex; gap:8px; max-width:360px; margin:0 auto 20px; }
-.lookup-inp {
-  flex:1; padding:13px 16px;
-  background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.15);
-  border-radius:8px; color:#d8f3dc; font-family:'JetBrains Mono',monospace;
-  font-size:1.1rem; font-weight:600; letter-spacing:3px; text-transform:uppercase;
-  outline:none; text-align:center; transition:border-color 0.15s;
-}
-.lookup-inp:focus { border-color:#52b788; }
-.lookup-inp::placeholder { color:rgba(216,243,220,0.25); letter-spacing:1px; font-size:0.85rem; }
-.lookup-result { margin-top:16px; text-align:left; }
-.lookup-school-name { font-size:1.1rem; font-weight:800; color:#d8f3dc; margin-bottom:12px; text-align:center; }
-.lookup-stats { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
-.ls { background:rgba(255,255,255,0.08); border-radius:8px; padding:10px 16px; text-align:center; border:1px solid rgba(255,255,255,0.1); }
-.ls-val { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:1px; color:#52b788; }
-.ls-lbl { font-size:0.68rem; color:rgba(216,243,220,0.5); text-transform:uppercase; letter-spacing:0.5px; }
-
-/* Category kawalan */
-.cat-card { background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:22px; text-align:center; transition:border-color 0.3s, box-shadow 0.3s; }
-.cat-card.running { border-color:var(--accent); box-shadow:0 0 0 3px rgba(45,106,79,0.1); }
-.cat-card.done { border-color:rgba(181,69,27,0.4); }
-.cat-big { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:4px; line-height:1; margin-bottom:6px; }
-.cat-big.L12 { color:var(--blue); }
-.cat-big.P12 { color:var(--purple); }
-.cat-st { font-size:0.78rem; color:var(--ink2); height:18px; margin-bottom:12px; }
-.cat-tm { font-family:'JetBrains Mono',monospace; font-size:1.9rem; font-weight:600; letter-spacing:3px; margin-bottom:16px; color:var(--ink3); min-height:38px; }
-.cat-tm.running { color:var(--accent); }
-.cat-mi { font-size:0.7rem; color:var(--ink3); margin-top:8px; font-family:'JetBrains Mono',monospace; min-height:14px; }
-
-/* Scan area */
-.scan-shell { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
-.scan-head { background:var(--ink); padding:26px 22px; text-align:center; }
-.scan-ht { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:3px; color:rgba(250,250,248,0.4); margin-bottom:16px; }
-.cam-wrap { position:relative; width:100%; max-width:360px; margin:0 auto 14px; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; display:none; }
-.cam-wrap.on { display:block; }
-#camv { width:100%; height:100%; object-fit:cover; display:block; }
-.cam-ov { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-.cam-fr { width:200px; height:72px; border:2.5px solid #52b788; border-radius:6px; box-shadow:0 0 0 2000px rgba(0,0,0,0.55); position:relative; }
-.cam-fr::before,.cam-fr::after { content:''; position:absolute; width:16px; height:16px; border-color:#52b788; border-style:solid; }
-.cam-fr::before { top:-2px; left:-2px; border-width:3px 0 0 3px; }
-.cam-fr::after { bottom:-2px; right:-2px; border-width:0 3px 3px 0; }
-.sl { position:absolute; left:4px; right:4px; height:2px; background:linear-gradient(90deg,transparent,#52b788,transparent); animation:scan 2s ease-in-out infinite; }
-@keyframes scan { 0%{top:4px;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{top:calc(100% - 6px);opacity:0} }
-.ai-st { display:flex; align-items:center; justify-content:center; gap:8px; font-size:0.75rem; color:rgba(250,250,248,0.45); margin-bottom:12px; min-height:20px; }
-.ai-dot { width:7px; height:7px; border-radius:50%; background:rgba(250,250,248,0.2); flex-shrink:0; }
-.ai-dot.think { background:#d29922; animation:pulse 0.9s ease infinite; }
-.ai-dot.ok { background:#52b788; }
-.ai-dot.err { background:var(--accent2); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
-.cam-btns { display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap; }
-.bib-row { display:flex; gap:8px; max-width:340px; margin:0 auto; }
-.bib-inp {
-  flex:1; padding:12px 14px;
-  background:rgba(255,255,255,0.07); border:1.5px solid rgba(255,255,255,0.15);
-  border-radius:8px; color:#fafaf8; font-family:'JetBrains Mono',monospace;
-  font-size:1.1rem; font-weight:600; letter-spacing:3px; text-transform:uppercase;
-  outline:none; text-align:center; transition:border-color 0.15s;
-}
-.bib-inp:focus { border-color:#52b788; }
-.bib-inp::placeholder { color:rgba(255,255,255,0.18); font-size:0.8rem; letter-spacing:1px; }
-.scan-res-wrap { min-height:80px; display:flex; align-items:center; justify-content:center; padding:0 16px; }
-.sres { width:100%; max-width:400px; border-radius:9px; padding:12px 16px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); display:none; text-align:left; }
-.sres.show { display:block; }
-.sres.ok { border-color:#52b788; background:rgba(82,183,136,0.1); }
-.sres.err { border-color:var(--accent2); background:rgba(181,69,27,0.1); }
-.sres-name { font-weight:700; font-size:0.95rem; color:#fafaf8; margin-bottom:3px; }
-.sres-meta { font-size:0.76rem; color:rgba(250,250,248,0.5); }
-.sres-tm { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#52b788; margin-top:5px; font-weight:600; }
-.scan-foot { padding:16px 18px; }
-
-/* API key bar */
-.apibar { background:var(--blue-light); border:1px solid rgba(26,74,138,0.2); border-radius:10px; padding:14px 16px; margin-bottom:14px; }
-.api-row { display:flex; gap:8px; align-items:center; margin-top:8px; }
-.api-inp { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--ink); outline:none; }
-
-/* LB */
-.lbh { display:grid; grid-template-columns:52px 1fr 150px 110px 90px; gap:8px; padding:9px 14px; background:var(--surface2); font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--ink2); border-radius:8px 8px 0 0; }
-.lbr { display:grid; grid-template-columns:52px 1fr 150px 110px 90px; gap:8px; padding:11px 14px; border-bottom:1px solid var(--border); align-items:center; }
-.lbr:hover { background:rgba(28,26,20,0.02); }
-.lbr:last-child { border-bottom:none; }
-.rn { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:1px; color:var(--ink2); }
-.rn.g { color:#b8860b; }
-.rn.s { color:#6b7280; }
-.rn.b { color:#a0522d; }
-.lbn { font-weight:700; font-size:0.86rem; }
-.lbs { font-size:0.74rem; color:var(--ink2); margin-top:2px; }
-.lbd { font-family:'JetBrains Mono',monospace; font-size:0.86rem; font-weight:600; color:var(--accent); }
-.log-box { background:var(--surface2); border-radius:8px; padding:11px 14px; font-size:0.73rem; font-family:'JetBrains Mono',monospace; color:var(--ink2); max-height:150px; overflow-y:auto; line-height:1.9; border:1px solid var(--border); }
-
-/* Import summary */
-.import-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0; }
-.ims { border-radius:8px; padding:12px; text-align:center; }
-.ims-val { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:1px; }
-.ims-lbl { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
-.ims.new { background:var(--accent-light); color:var(--accent); }
-.ims.dup { background:var(--accent2-light); color:var(--accent2); }
-.ims.skip { background:var(--amber-light); color:var(--amber); }
-.ims.total { background:var(--surface2); color:var(--ink2); }
-
-/* Responsive */
-@media(max-width:680px) {
-  .g2,.g3 { grid-template-columns:1fr; }
-  .lbh,.lbr { grid-template-columns:44px 1fr 90px; }
-  .lbh>*:nth-child(3),.lbr>*:nth-child(3),.lbh>*:nth-child(5),.lbr>*:nth-child(5) { display:none; }
-  .import-summary { grid-template-columns:1fr 1fr; }
-  .nb span { display:none; }
-  .steps .step-label { display:none; }
-  .page { padding:16px 14px; }
-}
-</style>
+<link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
 
@@ -356,9 +27,11 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
 <!-- ================================================================ -->
 <div class="page active" id="page-daftar">
   <div class="ph">Pendaftaran Peserta</div>
-  <div class="ps">Muat turun template CSV → isi maklumat peserta → upload semula. Sistem akan jana nombor series secara automatik.</div>
+  <div class="ps">Muat turun template CSV → isi maklumat peserta → upload semula. Atau tambah terus secara manual atau tampal dari Excel.</div>
+  <div style="margin-bottom:16px;">
+    <button class="btn btn-dark" onclick="bukaFormManual()">➕ Tambah Peserta Manual</button>
+  </div>
 
-  <!-- STEPS -->
   <div class="steps" style="margin-bottom:24px;">
     <div class="step active" id="step1">
       <div class="step-dot active">1</div>
@@ -366,16 +39,15 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
     </div>
     <div class="step" id="step2">
       <div class="step-dot">2</div>
-      <div class="step-label">Isi & Upload CSV</div>
+      <div class="step-label">Isi &amp; Upload CSV</div>
     </div>
     <div class="step" id="step3">
       <div class="step-dot">3</div>
-      <div class="step-label">Semak & Sahkan</div>
+      <div class="step-label">Semak &amp; Sahkan</div>
     </div>
   </div>
 
   <div class="g2" style="margin-bottom:16px;">
-    <!-- STEP 1: DOWNLOAD TEMPLATE -->
     <div class="card">
       <div class="cl">📄 Langkah 1 — Muat Turun Template CSV</div>
       <div style="background:var(--surface2); border-radius:8px; padding:14px; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--ink2); line-height:1.9; margin-bottom:14px; border:1px solid var(--border);">
@@ -388,55 +60,64 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
       <button class="btn btn-dark btn-full" onclick="turunTemplate()">⬇ Muat Turun Template CSV</button>
     </div>
 
-    <!-- STEP 2: UPLOAD -->
     <div class="card">
-      <div class="cl">📂 Langkah 2 — Upload CSV Yang Telah Diisi</div>
-      <div class="upload-zone" id="uz" ondragover="dragOn(event)" ondragleave="dragOff()" ondrop="dropFile(event)">
-        <input type="file" accept=".csv" id="csv-file" onchange="bacaCSV(event)">
-        <div class="upload-icon">📋</div>
-        <div class="upload-title">Drag & drop CSV di sini</div>
-        <div class="upload-sub">atau klik untuk pilih fail</div>
+      <div class="cl">📂 Langkah 2 — Upload CSV atau Tampal dari Excel</div>
+      <div class="ftabs" id="upload-tabs" style="margin-bottom:12px;">
+        <button class="ftab active" onclick="setUploadTab('csv',this)">📄 Upload CSV</button>
+        <button class="ftab" onclick="setUploadTab('tampal',this)">📋 Tampal dari Excel</button>
+      </div>
+      <div id="upload-csv-zone">
+        <div class="upload-zone" id="uz" ondragover="dragOn(event)" ondragleave="dragOff()" ondrop="dropFile(event)">
+          <input type="file" accept=".csv" id="csv-file" onchange="bacaCSV(event)">
+          <div class="upload-icon">📋</div>
+          <div class="upload-title">Drag &amp; drop CSV di sini</div>
+          <div class="upload-sub">atau klik untuk pilih fail</div>
+        </div>
+      </div>
+      <div id="upload-tsv-zone" style="display:none;">
+        <div style="font-size:0.78rem; color:var(--ink2); margin-bottom:10px; line-height:1.6;">
+          Dalam Excel: <strong style="color:var(--ink);">pilih sel data → Ctrl+C</strong> → tampal di bawah.<br>
+          <span style="color:var(--accent);">✓ Kaedah ini selamat — nombor IC tidak akan rosak.</span>
+        </div>
+        <div style="font-size:0.73rem; color:var(--ink2); margin-bottom:8px; font-family:'JetBrains Mono',monospace;">
+          Susunan lajur: Nama &nbsp;|&nbsp; IC &nbsp;|&nbsp; Sekolah &nbsp;|&nbsp; Kod_Sekolah &nbsp;|&nbsp; Kategori &nbsp;|&nbsp; Jantina
+        </div>
+        <textarea class="inp" id="tsv-inp" rows="7"
+          placeholder="Tampal data dari Excel di sini (Ctrl+V)...&#10;Contoh selepas tampal:&#10;Ahmad Amirul	120105101234	SK Taman Maju	PBB1013	L12	Lelaki&#10;Siti Aishah	120205201111	SK Sri Aman	PBB1013	P12	Perempuan"
+          style="font-family:'JetBrains Mono',monospace; font-size:0.74rem; resize:vertical;"></textarea>
+        <button class="btn btn-green btn-full" onclick="bacaTSV()" style="margin-top:10px;">📋 Proses Data Tampal</button>
       </div>
       <div id="upload-info" style="display:none; margin-top:10px;" class="alert al-g"></div>
     </div>
   </div>
 
-  <!-- STEP 3: PREVIEW & CONFIRM -->
   <div class="card" id="preview-card" style="display:none;">
     <div class="cl" style="justify-content:space-between;">
-      <span>👁 Langkah 3 — Semak & Sahkan Import</span>
+      <span>👁 Langkah 3 — Semak &amp; Sahkan Import</span>
       <button class="btn btn-sm btn-ghost" onclick="clearPreview()">✕ Batal</button>
     </div>
-
-    <!-- Summary -->
     <div class="import-summary" id="imp-summary"></div>
-
-    <div id="dup-warn" style="display:none;" class="alert al-r" style="margin-bottom:12px;">
+    <div id="dup-warn" style="display:none; margin-bottom:12px;" class="alert al-r">
       ⚠️ <span id="dup-warn-txt"></span>
     </div>
-
-    <!-- Filter -->
     <div class="ftabs">
       <button class="ftab active" onclick="fprev('semua',this)">Semua</button>
       <button class="ftab" onclick="fprev('baru',this)">✅ Baru</button>
       <button class="ftab" onclick="fprev('dup',this)">⚠️ Duplikat</button>
     </div>
-
     <div class="preview-wrap">
       <table>
         <thead><tr><th>Status</th><th>Nama</th><th>IC</th><th>Sekolah</th><th>Kod Sekolah</th><th>Kategori</th><th>Jantina</th></tr></thead>
         <tbody id="tb-prev"></tbody>
       </table>
     </div>
-
     <div style="display:flex; gap:10px; margin-top:14px; justify-content:flex-end; flex-wrap:wrap;">
       <button class="btn btn-ghost" onclick="clearPreview()">Batal</button>
       <button class="btn btn-red btn-sm" onclick="importHanya('baru')" id="btn-skip-dup" style="display:none;">Import Baru Sahaja (Abaikan Duplikat)</button>
-      <button class="btn btn-green btn-lg" onclick="importSemua()" id="btn-import-all">✅ Sahkan & Import Semua</button>
+      <button class="btn btn-green btn-lg" onclick="importSemua()" id="btn-import-all">✅ Sahkan &amp; Import Semua</button>
     </div>
   </div>
 
-  <!-- SENARAI MURID -->
   <div class="card" style="margin-top:16px;">
     <div class="cl" style="justify-content:space-between;">
       <span>📋 Senarai Peserta Berdaftar</span>
@@ -446,12 +127,11 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
         <button class="btn btn-sm btn-ghost" style="color:var(--accent2);" onclick="tanyaReset()">🗑 Reset</button>
       </div>
     </div>
-    <div class="ftabs">
+    <div class="ftabs" id="murid-ftabs">
       <button class="ftab active" onclick="fd('semua',this)">Semua</button>
       <button class="ftab" onclick="fd('L12',this)">L12</button>
       <button class="ftab" onclick="fd('P12',this)">P12</button>
     </div>
-    <!-- Search -->
     <input class="inp" id="cari-inp" placeholder="🔍 Cari nama, IC, sekolah atau kod sekolah..." oninput="renderMurid()" style="margin-bottom:12px;">
     <div class="tw">
       <table>
@@ -468,7 +148,6 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
 <div class="page" id="page-semak">
   <div class="ph">Semak Penyertaan Sekolah</div>
   <div class="ps">Guru boleh masukkan kod sekolah untuk semak senarai peserta dan status larian mereka.</div>
-
   <div class="lookup-box">
     <div class="lookup-title">MASUKKAN KOD SEKOLAH</div>
     <div style="font-size:0.78rem; color:rgba(216,243,220,0.35); margin-bottom:16px;">cth: PBB1013</div>
@@ -480,8 +159,6 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
     </div>
     <div id="lookup-result" class="lookup-result" style="display:none;"></div>
   </div>
-
-  <!-- Result table -->
   <div class="card" id="lookup-table-card" style="display:none; margin-top:16px;">
     <div class="cl" style="justify-content:space-between;">
       <span id="lookup-card-title">Senarai Peserta</span>
@@ -537,8 +214,6 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
 <div class="page" id="page-scan">
   <div class="ph">Scan Garisan Penamat</div>
   <div class="ps">Gunakan kamera AI atau taip manual nombor bib peserta yang telah tamat larian.</div>
-
-  <!-- API KEY -->
   <div class="apibar">
     <div style="font-size:0.75rem; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px;">🤖 Claude AI Vision</div>
     <div style="font-size:0.75rem; color:var(--ink2); margin-top:3px; margin-bottom:8px;">Masukkan Anthropic API key untuk aktifkan kamera AI. Key disimpan dalam browser sahaja.</div>
@@ -549,9 +224,16 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
     </div>
     <div id="ak-st" style="font-size:0.7rem; margin-top:5px; color:var(--ink2);"></div>
   </div>
-
+  <div class="apibar" style="margin-bottom:14px;">
+    <div style="font-size:0.75rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:1px;">📊 Google Sheets</div>
+    <div style="font-size:0.75rem; color:var(--ink2); margin-top:3px; margin-bottom:8px;">Tampal URL Apps Script untuk hantar keputusan ke Google Sheets secara langsung.</div>
+    <div class="api-row">
+      <input class="api-inp" id="gs-inp" type="text" placeholder="https://script.google.com/macros/s/...">
+      <button class="btn btn-sm btn-ghost" onclick="simpanGS()">Simpan</button>
+    </div>
+    <div id="gs-st" style="font-size:0.7rem; margin-top:5px; color:var(--ink2);"></div>
+  </div>
   <div id="scan-bar" class="alert al-a">⚠️ Tiada larian aktif. Mulakan larian di halaman Kawalan dahulu.</div>
-
   <div class="scan-shell">
     <div class="scan-head">
       <div class="scan-ht">IMBAS NOMBOR BIB</div>
@@ -562,7 +244,7 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
       <div class="ai-st"><div class="ai-dot" id="aid"></div><span id="ait">Kamera tidak aktif</span></div>
       <div class="cam-btns">
         <button class="btn btn-blue" id="btn-cam" onclick="toggleCam()">📷 Buka Kamera AI</button>
-        <button class="btn btn-green" id="btn-cap" onclick="tangkap()" style="display:none;">⚡ Tangkap & Scan AI</button>
+        <button class="btn btn-green" id="btn-cap" onclick="tangkap()" style="display:none;">⚡ Tangkap &amp; Scan AI</button>
         <button class="btn btn-ghost btn-sm" id="btn-stopc" onclick="stopCam()" style="display:none; color:#fafaf8; border-color:rgba(255,255,255,0.2);">✕ Tutup</button>
       </div>
       <div style="font-size:0.7rem; color:rgba(250,250,248,0.25); letter-spacing:1px; margin-bottom:10px;">— ATAU TAIP MANUAL —</div>
@@ -599,7 +281,7 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
 <!-- PAGE: KEPUTUSAN -->
 <!-- ================================================================ -->
 <div class="page" id="page-keputusan">
-  <div class="ph">Keputusan & Ranking</div>
+  <div class="ph">Keputusan &amp; Ranking</div>
   <div class="ps">Papan pendahulu dikemaskini setiap kali peserta direkod.</div>
   <div class="chips">
     <div class="chip"><div class="cv" id="st-tot">0</div><div class="ck">Jumlah Tamat</div></div>
@@ -622,6 +304,28 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
   </div>
 </div>
 
+<!-- MODAL TAMBAH MANUAL -->
+<div class="modal-bg" id="modal-tambah">
+  <div class="modal" style="max-width:460px;">
+    <h3>➕ Tambah Peserta Manual</h3>
+    <p style="margin:0 0 14px; font-size:0.82rem; color:var(--ink2);">Taip terus — IC tidak akan rosak kerana tidak melalui Excel CSV.</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
+      <input class="inp" id="m-nama" placeholder="Nama Penuh" autocomplete="off">
+      <input class="inp" id="m-ic" placeholder="No. IC (12 digit, tanpa sempang)" maxlength="12" inputmode="numeric" autocomplete="off">
+      <input class="inp" id="m-skl" placeholder="Nama Sekolah" autocomplete="off">
+      <input class="inp" id="m-kod" placeholder="Kod Sekolah (cth: PBB1013)" oninput="this.value=this.value.toUpperCase()" autocomplete="off">
+      <select class="sel" id="m-kat">
+        <option value="L12">L12 — Lelaki</option>
+        <option value="P12">P12 — Perempuan</option>
+      </select>
+    </div>
+    <div class="ma">
+      <button class="btn btn-ghost" onclick="tutupFormManual()">Batal</button>
+      <button class="btn btn-green" onclick="simpanManual()">✅ Tambah Peserta</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL RESET -->
 <div class="modal-bg" id="modal-reset">
   <div class="modal">
@@ -634,657 +338,6 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
   </div>
 </div>
 
-<script>
-// ============================================================
-// STATE
-// ============================================================
-let murid  = JSON.parse(localStorage.getItem('md3_murid')  || '[]');
-let rekod  = JSON.parse(localStorage.getItem('md3_rekod')  || '[]');
-let larian = JSON.parse(localStorage.getItem('md3_larian') || '{"L12":{"s":"idle","mula":null,"tamat":null},"P12":{"s":"idle","mula":null,"tamat":null}}');
-let cL = parseInt(localStorage.getItem('md3_cL') || '0');
-let cP = parseInt(localStorage.getItem('md3_cP') || '0');
-let timers = {}, camStream = null;
-let apiKey = localStorage.getItem('md3_ak') || '';
-let fdAktif = 'semua', flbAktif = 'semua';
-let prevData = []; // CSV preview rows
-let prevFilter = 'semua';
-let lookupSekolah = ''; // current school code for export
-
-// ============================================================
-// SAVE
-// ============================================================
-function save() {
-  localStorage.setItem('md3_murid',  JSON.stringify(murid));
-  localStorage.setItem('md3_rekod',  JSON.stringify(rekod));
-  localStorage.setItem('md3_larian', JSON.stringify(larian));
-  localStorage.setItem('md3_cL', cL);
-  localStorage.setItem('md3_cP', cP);
-}
-
-// ============================================================
-// NOMBOR SERIES
-// ============================================================
-function jana(kat) {
-  if (kat === 'L12') { cL++; localStorage.setItem('md3_cL', cL); return 'L12' + String(cL).padStart(4,'0'); }
-  else { cP++; localStorage.setItem('md3_cP', cP); return 'P12' + String(cP).padStart(4,'0'); }
-}
-
-// ============================================================
-// CSV TEMPLATE DOWNLOAD
-// ============================================================
-function turunTemplate() {
-  const csv = `Nama,IC,Sekolah,Kod_Sekolah,Kategori,Jantina
-Ahmad Amirul bin Aiman,120105101234,SK Taman Maju,PBB1013,L12,Lelaki
-Siti Aishah binti Ali,120205201111,SK Sri Aman,PBB1013,P12,Perempuan
-Muhammad Hafiz,120301301567,SK Bukit Indah,PBB1014,L12,Lelaki`;
-  dl(csv, 'template-merentas-desa.csv', 'text/csv');
-  toast('Template dimuat turun!', 'ok');
-}
-
-function dl(content, filename, type) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([content], { type }));
-  a.download = filename;
-  a.click();
-}
-
-// ============================================================
-// DRAG & DROP
-// ============================================================
-function dragOn(e) { e.preventDefault(); document.getElementById('uz').classList.add('drag'); }
-function dragOff() { document.getElementById('uz').classList.remove('drag'); }
-function dropFile(e) {
-  e.preventDefault(); dragOff();
-  const f = e.dataTransfer.files[0];
-  if (f && f.name.endsWith('.csv')) prosesFile(f);
-  else toast('Sila gunakan fail CSV sahaja.', 'err');
-}
-function bacaCSV(e) { const f = e.target.files[0]; if (f) prosesFile(f); }
-
-// ============================================================
-// BACA & PREVIEW CSV
-// ============================================================
-function prosesFile(file) {
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const lines = ev.target.result.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-    if (lines.length < 2) { toast('Fail CSV kosong atau format salah.', 'err'); return; }
-
-    // Detect header
-    const header = lines[0].toLowerCase();
-    const hasHeader = header.includes('nama') || header.includes('ic') || header.includes('sekolah');
-    const dataLines = hasHeader ? lines.slice(1) : lines;
-
-    prevData = [];
-    dataLines.forEach(line => {
-      const parts = line.split(',').map(p => p.trim());
-      if (parts.length < 6 || !parts[0] || !parts[1]) return;
-
-      const nama    = parts[0];
-      const ic      = parts[1].replace(/[^0-9]/g, '');
-      const sekolah = parts[2];
-      const kodSkl  = parts[3].toUpperCase();
-      const kat     = parts[4].toUpperCase().includes('L') ? 'L12' : 'P12';
-      const jantina = parts[5].toLowerCase().includes('p') ? 'Perempuan' : 'Lelaki';
-
-      // Check duplicate — by IC
-      const dupIC   = murid.find(m => m.ic === ic);
-      // Check duplicate within this batch
-      const dupBatch = prevData.find(p => p.ic === ic);
-
-      let status = 'baru';
-      let dupMsg = '';
-      if (dupIC) { status = 'dup'; dupMsg = `IC ada dalam sistem (${dupIC.nombor})`; }
-      else if (dupBatch) { status = 'dup'; dupMsg = 'IC duplikat dalam fail CSV ini'; }
-
-      prevData.push({ nama, ic, sekolah, kodSkl, kat, jantina, status, dupMsg });
-    });
-
-    renderPreview();
-    document.getElementById('preview-card').style.display = 'block';
-    document.getElementById('upload-info').style.display = 'block';
-    document.getElementById('upload-info').textContent = `✓ "${file.name}" — ${prevData.length} rekod dijumpai.`;
-    setStep(2);
-  };
-  reader.readAsText(file);
-}
-
-function renderPreview() {
-  const baru = prevData.filter(p => p.status === 'baru').length;
-  const dup  = prevData.filter(p => p.status === 'dup').length;
-
-  // Summary
-  document.getElementById('imp-summary').innerHTML = `
-    <div class="ims total"><div class="ims-val">${prevData.length}</div><div class="ims-lbl">Jumlah Rekod</div></div>
-    <div class="ims new"><div class="ims-val">${baru}</div><div class="ims-lbl">Rekod Baru</div></div>
-    <div class="ims dup"><div class="ims-val">${dup}</div><div class="ims-lbl">Duplikat</div></div>
-    <div class="ims skip"><div class="ims-val">${murid.length}</div><div class="ims-lbl">Sudah Dalam Sistem</div></div>
-  `;
-
-  if (dup > 0) {
-    document.getElementById('dup-warn').style.display = 'flex';
-    document.getElementById('dup-warn-txt').textContent = `${dup} rekod duplikat dijumpai. Rekod ini mempunyai IC yang sama dalam sistem atau dalam fail CSV ini.`;
-    document.getElementById('btn-skip-dup').style.display = 'inline-flex';
-    document.getElementById('btn-import-all').textContent = '⚠️ Import Semua (Termasuk Duplikat)';
-  } else {
-    document.getElementById('dup-warn').style.display = 'none';
-    document.getElementById('btn-skip-dup').style.display = 'none';
-    document.getElementById('btn-import-all').textContent = '✅ Sahkan & Import Semua';
-  }
-
-  renderPrevTable();
-}
-
-function fprev(f, el) {
-  prevFilter = f;
-  document.querySelectorAll('#preview-card .ftab').forEach(t => t.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderPrevTable();
-}
-
-function renderPrevTable() {
-  const data = prevFilter === 'semua' ? prevData : prevData.filter(p => p.status === prevFilter);
-  const tb = document.getElementById('tb-prev');
-  if (!data.length) {
-    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--ink2);padding:20px;">Tiada rekod${prevFilter !== 'semua' ? ' dalam kategori ini' : ''}.`;
-    return;
-  }
-  tb.innerHTML = data.map(p => `
-    <tr class="${p.status === 'dup' ? 'dup' : ''}">
-      <td>${p.status === 'baru' ? '<span class="badge bg-g">✓ Baru</span>' : `<span class="badge bg-r">⚠ Duplikat</span><div style="font-size:0.68rem;color:var(--accent2);margin-top:3px;">${p.dupMsg}</div>`}</td>
-      <td>${p.nama}</td>
-      <td class="mono">${p.ic}</td>
-      <td>${p.sekolah}</td>
-      <td class="mono">${p.kodSkl}</td>
-      <td><span class="badge ${p.kat==='L12'?'bg-b':'bg-p'}">${p.kat}</span></td>
-      <td>${p.jantina}</td>
-    </tr>`).join('');
-}
-
-function clearPreview() {
-  prevData = [];
-  document.getElementById('preview-card').style.display = 'none';
-  document.getElementById('upload-info').style.display = 'none';
-  document.getElementById('csv-file').value = '';
-  setStep(1);
-}
-
-// ============================================================
-// IMPORT
-// ============================================================
-function importSemua() { doImport(prevData); }
-function importHanya(status) { doImport(prevData.filter(p => p.status === status)); }
-
-function doImport(rows) {
-  let count = 0;
-  rows.forEach(p => {
-    // Skip if IC already in system (double check)
-    if (murid.find(m => m.ic === p.ic)) return;
-    const nombor = jana(p.kat);
-    murid.push({ id: Date.now()+''+Math.random(), nombor, nama: p.nama, ic: p.ic, sekolah: p.sekolah, kodSkl: p.kodSkl, kat: p.kat, jantina: p.jantina });
-    count++;
-  });
-  save();
-  renderMurid();
-  updateStats();
-  clearPreview();
-  setStep(3);
-  toast(`✅ ${count} peserta berjaya didaftarkan!`, 'ok');
-}
-
-// ============================================================
-// RENDER MURID
-// ============================================================
-function fd(f, el) {
-  fdAktif = f;
-  document.querySelectorAll('#page-daftar .ftabs:not(#preview-card .ftabs) .ftab').forEach(t => t.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderMurid();
-}
-
-function renderMurid() {
-  const cari = (document.getElementById('cari-inp')?.value || '').toLowerCase();
-  let data = fdAktif === 'semua' ? murid : murid.filter(m => m.kat === fdAktif);
-  if (cari) data = data.filter(m =>
-    m.nama.toLowerCase().includes(cari) ||
-    m.ic.includes(cari) ||
-    m.sekolah.toLowerCase().includes(cari) ||
-    (m.kodSkl || '').toLowerCase().includes(cari)
-  );
-  document.getElementById('jml').textContent = murid.length + ' peserta';
-  const tb = document.getElementById('tb-murid');
-  if (!data.length) {
-    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--ink2);padding:28px;font-size:0.83rem;">Tiada peserta dijumpai.</td></tr>`;
-    return;
-  }
-  tb.innerHTML = data.map(m => {
-    const done = rekod.find(r => r.nombor === m.nombor);
-    return `<tr>
-      <td class="mono" style="font-weight:600;">${m.nombor}</td>
-      <td>${m.nama}</td>
-      <td class="mono" style="color:var(--ink2);font-size:0.72rem;">${m.ic}</td>
-      <td>${m.sekolah}</td>
-      <td class="mono" style="font-size:0.75rem;">${m.kodSkl||'-'}</td>
-      <td><span class="badge ${m.kat==='L12'?'bg-b':'bg-p'}">${m.kat}</span></td>
-      <td>${done ? '<span class="badge bg-g">✓ Tamat Larian</span>' : '<span class="badge bg-x">Belum Berlari</span>'}</td>
-      <td><button class="btn btn-sm btn-ghost" style="color:var(--accent2);" onclick="hapus('${m.id}')">✕</button></td>
-    </tr>`;
-  }).join('');
-}
-
-function hapus(id) {
-  murid = murid.filter(m => String(m.id) !== String(id));
-  save(); renderMurid(); updateStats();
-  toast('Peserta dipadam.', 'ok');
-}
-
-function eksportSenarai() {
-  if (!murid.length) { toast('Tiada data.', 'err'); return; }
-  let csv = 'No Series,Nama,IC,Sekolah,Kod Sekolah,Kategori,Jantina,Status Larian\n';
-  murid.forEach(m => {
-    const done = rekod.find(r => r.nombor === m.nombor);
-    csv += `"${m.nombor}","${m.nama}","${m.ic}","${m.sekolah}","${m.kodSkl||''}",${m.kat},${m.jantina},"${done ? 'Tamat' : 'Belum'}"\n`;
-  });
-  dl(csv, `senarai-peserta-${Date.now()}.csv`, 'text/csv');
-  toast('Senarai dieksport!', 'ok');
-}
-
-// ============================================================
-// STEP INDICATOR
-// ============================================================
-function setStep(n) {
-  [1,2,3].forEach(i => {
-    const s = document.getElementById('step'+i);
-    const dot = s.querySelector('.step-dot');
-    s.classList.remove('active');
-    dot.classList.remove('active','done');
-    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; }
-    else if (i === n) { dot.classList.add('active'); s.classList.add('active'); dot.textContent = i; }
-    else { dot.textContent = i; }
-  });
-}
-
-// ============================================================
-// SEMAK SEKOLAH
-// ============================================================
-function semakSekolah() {
-  const kod = document.getElementById('kod-inp').value.trim().toUpperCase();
-  if (!kod) { toast('Sila masukkan kod sekolah.', 'err'); return; }
-  lookupSekolah = kod;
-  const peserta = murid.filter(m => (m.kodSkl || '').toUpperCase() === kod);
-  const res = document.getElementById('lookup-result');
-  const card = document.getElementById('lookup-table-card');
-
-  if (!peserta.length) {
-    res.style.display = 'block';
-    res.innerHTML = `<div style="text-align:center; padding:20px; color:rgba(216,243,220,0.4); font-size:0.88rem;">Tiada peserta dijumpai untuk kod sekolah <strong style="color:#d8f3dc;">${kod}</strong>.</div>`;
-    card.style.display = 'none';
-    return;
-  }
-
-  // Get school name from first result
-  const namaSekolah = peserta[0].sekolah;
-  const L12 = peserta.filter(p => p.kat === 'L12');
-  const P12 = peserta.filter(p => p.kat === 'P12');
-  const sudahTamat = peserta.filter(p => rekod.find(r => r.nombor === p.nombor));
-
-  document.getElementById('lookup-card-title').textContent = `${namaSekolah} (${kod})`;
-
-  res.style.display = 'block';
-  res.innerHTML = `
-    <div class="lookup-school-name">🏫 ${namaSekolah} · <span class="mono">${kod}</span></div>
-    <div class="lookup-stats">
-      <div class="ls"><div class="ls-val">${peserta.length}</div><div class="ls-lbl">Jumlah Peserta</div></div>
-      <div class="ls"><div class="ls-val">${L12.length}</div><div class="ls-lbl">L12 Lelaki</div></div>
-      <div class="ls"><div class="ls-val">${P12.length}</div><div class="ls-lbl">P12 Perempuan</div></div>
-      <div class="ls"><div class="ls-val" style="color:#52b788;">${sudahTamat.length}</div><div class="ls-lbl">Sudah Tamat Larian</div></div>
-      <div class="ls"><div class="ls-val" style="color:#d29922;">${peserta.length - sudahTamat.length}</div><div class="ls-lbl">Belum Berlari</div></div>
-    </div>
-  `;
-
-  // Render table
-  const tb = document.getElementById('tb-lookup');
-  tb.innerHTML = peserta.map(p => {
-    const r = rekod.find(x => x.nombor === p.nombor);
-    const ranking = r ? rekod.filter(x => x.kat === p.kat && x.tempoh <= r.tempoh).length : '-';
-    return `<tr>
-      <td class="mono" style="font-weight:600;">${p.nombor}</td>
-      <td>${p.nama}</td>
-      <td class="mono" style="font-size:0.72rem; color:var(--ink2);">${p.ic}</td>
-      <td><span class="badge ${p.kat==='L12'?'bg-b':'bg-p'}">${p.kat}</span></td>
-      <td>${r ? '<span class="badge bg-g">✓ Tamat</span>' : '<span class="badge bg-x">Belum</span>'}</td>
-      <td>${r ? `<strong>#${ranking}</strong> dalam ${p.kat}` : '-'}</td>
-      <td class="mono" style="color:var(--accent);">${r ? fDur(r.tempoh) : '-'}</td>
-    </tr>`;
-  }).join('');
-
-  card.style.display = 'block';
-}
-
-function eksportSekolah() {
-  const peserta = murid.filter(m => (m.kodSkl || '').toUpperCase() === lookupSekolah);
-  if (!peserta.length) return;
-  let csv = 'No Series,Nama,IC,Kategori,Status,Ranking,Masa Larian\n';
-  peserta.forEach(p => {
-    const r = rekod.find(x => x.nombor === p.nombor);
-    const ranking = r ? rekod.filter(x => x.kat === p.kat && x.tempoh <= r.tempoh).length : '-';
-    csv += `"${p.nombor}","${p.nama}","${p.ic}",${p.kat},"${r?'Tamat':'Belum'}","${ranking}","${r?fDur(r.tempoh):'-'}"\n`;
-  });
-  dl(csv, `peserta-${lookupSekolah}-${Date.now()}.csv`, 'text/csv');
-  toast('Eksport berjaya!', 'ok');
-}
-
-// ============================================================
-// KAWALAN LARIAN
-// ============================================================
-function mula(kat) {
-  if (larian[kat].s === 'running') { toast(`Larian ${kat} sudah bermula!`, 'err'); return; }
-  larian[kat] = { s:'running', mula:Date.now(), tamat:null };
-  save(); updateKUI(kat); startTimer(kat);
-  addLog(`🏁 Larian ${kat} DIMULAKAN — ${fW(new Date())}`);
-  toast(`Larian ${kat} dimulakan!`, 'ok');
-}
-
-function tamat(kat) {
-  if (larian[kat].s !== 'running') return;
-  larian[kat].s = 'done'; larian[kat].tamat = Date.now();
-  clearInterval(timers[kat]);
-  save(); updateKUI(kat);
-  addLog(`⏹ Larian ${kat} DITAMATKAN — ${fW(new Date())}`);
-  toast(`Larian ${kat} ditamatkan.`, 'ok');
-}
-
-function startTimer(kat) {
-  clearInterval(timers[kat]);
-  timers[kat] = setInterval(() => {
-    if (larian[kat].s !== 'running') { clearInterval(timers[kat]); return; }
-    document.getElementById(`ct-${kat}`).textContent = fDur(Date.now() - larian[kat].mula);
-  }, 1000);
-}
-
-function updateKUI(kat) {
-  const s = larian[kat].s;
-  const cc = document.getElementById(`cc-${kat}`);
-  const cs = document.getElementById(`cs-${kat}`);
-  const ct = document.getElementById(`ct-${kat}`);
-  const bm = document.getElementById(`bm-${kat}`);
-  const bt = document.getElementById(`bt-${kat}`);
-  const cm = document.getElementById(`cm-${kat}`);
-  cc.className = `cat-card ${s==='running'?'running':s==='done'?'done':''}`;
-  ct.className = `cat-tm ${s==='running'?'running':''}`;
-  if (s === 'idle') { cs.textContent='Belum bermula'; bm.disabled=false; bt.disabled=true; cm.textContent=''; ct.textContent='--:--:--'; }
-  else if (s === 'running') { cs.textContent='🟢 SEDANG BERLARI'; bm.disabled=true; bt.disabled=false; cm.textContent=`Mula: ${fW(new Date(larian[kat].mula))}`; }
-  else { cs.textContent='🔴 Larian tamat'; bm.disabled=true; bt.disabled=true; const dur=larian[kat].tamat-larian[kat].mula; ct.textContent=fDur(dur); cm.textContent=`Mula: ${fW(new Date(larian[kat].mula))} · Selesai: ${fW(new Date(larian[kat].tamat))}`; }
-}
-
-function addLog(msg) {
-  const log = document.getElementById('log');
-  log.innerHTML = `<span style="color:var(--accent);">[${fW(new Date())}]</span> ${msg}\n` + log.innerHTML;
-}
-
-// ============================================================
-// CAMERA / AI
-// ============================================================
-async function toggleCam() {
-  if (camStream) { stopCam(); return; }
-  if (!apiKey) { toast('Masukkan API key Claude dahulu!', 'err'); return; }
-  try {
-    camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1280} } });
-    document.getElementById('camv').srcObject = camStream;
-    document.getElementById('cam-wrap').classList.add('on');
-    document.getElementById('btn-cam').textContent = '📷 Kamera Aktif';
-    document.getElementById('btn-cap').style.display = 'inline-flex';
-    document.getElementById('btn-stopc').style.display = 'inline-flex';
-    setAI('ready', 'Kamera aktif. Tekan Tangkap untuk scan.');
-  } catch(e) { toast('Tidak dapat akses kamera: ' + e.message, 'err'); }
-}
-
-function stopCam() {
-  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-  document.getElementById('camv').srcObject = null;
-  document.getElementById('cam-wrap').classList.remove('on');
-  document.getElementById('btn-cam').textContent = '📷 Buka Kamera AI';
-  document.getElementById('btn-cap').style.display = 'none';
-  document.getElementById('btn-stopc').style.display = 'none';
-  setAI('idle', 'Kamera tidak aktif');
-}
-
-async function tangkap() {
-  if (!camStream) return;
-  const v = document.getElementById('camv');
-  const c = document.createElement('canvas');
-  c.width = v.videoWidth; c.height = v.videoHeight;
-  c.getContext('2d').drawImage(v, 0, 0);
-  const b64 = c.toDataURL('image/jpeg', 0.85).split(',')[1];
-  setAI('think', 'AI sedang membaca nombor bib...');
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-opus-4-6',
-        max_tokens: 60,
-        messages: [{ role:'user', content:[
-          { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:b64 } },
-          { type:'text', text:'Gambar ini adalah bib (nombor dada) peserta merentas desa. Cari nombor series pada bib. Format: L12xxxx atau P12xxxx (contoh: L120045 atau P120012). Balas dengan nombor series SAHAJA, tiada teks lain. Jika tidak nampak, balas: TIDAK NAMPAK' }
-        ]}]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const txt = data.content[0].text.trim().toUpperCase().replace(/\s/g,'');
-    if (txt === 'TIDAK NAMPAK' || txt.length < 5) {
-      setAI('err', 'AI tidak dapat baca nombor. Cuba tangkap semula atau taip manual.');
-      toast('AI tidak dapat detect nombor.', 'err');
-    } else {
-      setAI('ok', `✓ AI detect: ${txt}`);
-      document.getElementById('bib-inp').value = txt;
-      toast(`AI detect: ${txt}`, 'ok');
-      setTimeout(() => proses(txt), 400);
-    }
-  } catch(e) { setAI('err', 'Ralat: ' + e.message); toast('Ralat API: ' + e.message, 'err'); }
-}
-
-function setAI(state, msg) {
-  const dot = document.getElementById('aid');
-  document.getElementById('ait').textContent = msg;
-  dot.className = 'ai-dot' + (state==='think'?' think':state==='ok'?' ok':state==='err'?' err':'');
-}
-
-function simpanAK() {
-  const v = document.getElementById('ak-inp').value.trim();
-  if (!v) { toast('Sila masukkan API key.', 'err'); return; }
-  apiKey = v; localStorage.setItem('md3_ak', apiKey);
-  document.getElementById('ak-st').innerHTML = '<span style="color:var(--accent);">✓ API key disimpan.</span>';
-  toast('API key disimpan!', 'ok');
-}
-function toggleAK() {
-  const i = document.getElementById('ak-inp');
-  i.type = i.type === 'password' ? 'text' : 'password';
-}
-
-// ============================================================
-// PROSES NOMBOR (SCAN/MANUAL)
-// ============================================================
-function proses(val) {
-  val = (val || '').trim().toUpperCase();
-  const inp = document.getElementById('bib-inp');
-  const sres = document.getElementById('sres');
-  sres.className = 'sres show';
-  if (!val) return;
-
-  const m = murid.find(x => x.nombor === val);
-  if (!m) {
-    sres.classList.add('err');
-    document.getElementById('sres-name').textContent = '❌ Nombor tidak dijumpai';
-    document.getElementById('sres-meta').textContent = `"${val}" tidak wujud dalam senarai peserta.`;
-    document.getElementById('sres-tm').textContent = '';
-    toast('Nombor tidak dijumpai!', 'err');
-    inp.select(); return;
-  }
-  if (larian[m.kat].s === 'idle') {
-    sres.classList.add('err');
-    document.getElementById('sres-name').textContent = `⚠️ Larian ${m.kat} belum dimulakan`;
-    document.getElementById('sres-meta').textContent = `Sila mulakan larian ${m.kat} di halaman Kawalan.`;
-    document.getElementById('sres-tm').textContent = '';
-    inp.select(); return;
-  }
-  if (rekod.find(r => r.nombor === val)) {
-    sres.classList.add('err');
-    document.getElementById('sres-name').textContent = '⚠️ Sudah direkod!';
-    document.getElementById('sres-meta').textContent = `${m.nama} sudah discan sebelum ini.`;
-    document.getElementById('sres-tm').textContent = '';
-    toast('Peserta sudah direkod!', 'err');
-    inp.select(); return;
-  }
-  const now = Date.now();
-  const tempoh = now - larian[m.kat].mula;
-  const rankKat = rekod.filter(r => r.kat === m.kat).length + 1;
-  rekod.push({ nombor:val, nama:m.nama, sekolah:m.sekolah, kodSkl:m.kodSkl, kat:m.kat, mula:larian[m.kat].mula, tamatMs:now, tempoh, rankKat });
-  save(); renderScan(); renderLB(); updateStats(); renderMurid();
-  sres.classList.add('ok');
-  document.getElementById('sres-name').textContent = `✅ ${m.nama}`;
-  document.getElementById('sres-meta').textContent = `${m.sekolah} (${m.kodSkl||''}) · ${m.kat}`;
-  document.getElementById('sres-tm').textContent = `🏆 #${rankKat} dalam ${m.kat}  ·  Tempoh: ${fDur(tempoh)}`;
-  toast(`#${rankKat} ${m.nama} — ${fDur(tempoh)}`, 'ok');
-  inp.value = ''; inp.focus();
-}
-
-function renderScan() {
-  document.getElementById('scnt').textContent = rekod.length;
-  const data = [...rekod].reverse().slice(0, 20);
-  if (!data.length) { document.getElementById('tb-scan').innerHTML = '<tr><td colspan="5" style="text-align:center;color:rgba(250,250,248,0.25);padding:16px;font-size:0.78rem;">Belum ada rekod.</td></tr>'; return; }
-  document.getElementById('tb-scan').innerHTML = data.map(r => {
-    const rc = r.rankKat===1?'g':r.rankKat===2?'s':r.rankKat===3?'b':'';
-    return `<tr>
-      <td><span class="rn ${rc}" style="font-size:1rem;">#${r.rankKat}</span></td>
-      <td style="color:#fafaf8;">${r.nama}</td>
-      <td><span class="badge ${r.kat==='L12'?'bg-b':'bg-p'}">${r.kat}</span></td>
-      <td style="color:#52b788; font-family:'JetBrains Mono',monospace; font-size:0.82rem;">${fDur(r.tempoh)}</td>
-      <td style="color:rgba(250,250,248,0.4); font-family:'JetBrains Mono',monospace; font-size:0.72rem;">${fW(new Date(r.tamatMs))}</td>
-    </tr>`;
-  }).join('');
-}
-
-function updateScanBar() {
-  const bar = document.getElementById('scan-bar');
-  const L = larian.L12.s, P = larian.P12.s;
-  if (L==='running'&&P==='running') { bar.className='alert al-g'; bar.innerHTML='🟢 L12 dan P12 sedang berlari. Sedia untuk rekod.'; }
-  else if (L==='running') { bar.className='alert al-g'; bar.innerHTML='🟢 L12 sedang berlari.'; }
-  else if (P==='running') { bar.className='alert al-g'; bar.innerHTML='🟢 P12 sedang berlari.'; }
-  else if (L==='done'||P==='done') { bar.className='alert al-b'; bar.innerHTML='🔵 Larian selesai. Masih boleh rekod peserta yang tinggal.'; }
-  else { bar.className='alert al-a'; bar.innerHTML='⚠️ Tiada larian aktif. Mulakan larian di halaman <strong>Kawalan</strong>.'; }
-}
-
-// ============================================================
-// LEADERBOARD
-// ============================================================
-function flb(f, el) {
-  flbAktif = f;
-  document.querySelectorAll('#page-keputusan .ftab').forEach(t => t.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderLB();
-}
-
-function renderLB() {
-  let data = flbAktif==='semua' ? [...rekod] : rekod.filter(r => r.kat===flbAktif);
-  data.sort((a,b) => a.tempoh-b.tempoh);
-  const body = document.getElementById('lb-body');
-  if (!data.length) { body.innerHTML=`<div style="text-align:center;padding:40px;color:var(--ink2);font-size:0.83rem;">Belum ada rekod${flbAktif!=='semua'?' untuk '+flbAktif:''}.</div>`; return; }
-  body.innerHTML = data.map((r,i) => {
-    const rank = i+1, rc = rank===1?'g':rank===2?'s':rank===3?'b':'';
-    return `<div class="lbr">
-      <div class="rn ${rc}">${rank}</div>
-      <div><div class="lbn">${r.nama}</div><div style="display:flex;gap:4px;margin-top:3px;"><span class="badge ${r.kat==='L12'?'bg-b':'bg-p'}">${r.kat}</span></div></div>
-      <div class="lbs">${r.sekolah}</div>
-      <div class="lbd">${fDur(r.tempoh)}</div>
-      <div class="mono" style="font-size:0.74rem;color:var(--ink2);">${r.nombor}</div>
-    </div>`;
-  }).join('');
-}
-
-function updateStats() {
-  document.getElementById('st-tot').textContent = rekod.length;
-  document.getElementById('st-l').textContent   = rekod.filter(r=>r.kat==='L12').length;
-  document.getElementById('st-p').textContent   = rekod.filter(r=>r.kat==='P12').length;
-  document.getElementById('st-d').textContent   = murid.length;
-}
-
-function eksportCSV() {
-  if (!rekod.length) { toast('Tiada data.','err'); return; }
-  let csv = 'Ranking,No Series,Nama,Sekolah,Kod Sekolah,Kategori,Tempoh,Masa Tamat\n';
-  [...rekod].sort((a,b)=>a.kat.localeCompare(b.kat)||a.tempoh-b.tempoh).forEach((r,_,arr)=>{
-    const rank = arr.filter(x=>x.kat===r.kat&&x.tempoh<=r.tempoh).length;
-    csv += `${rank},"${r.nombor}","${r.nama}","${r.sekolah}","${r.kodSkl||''}",${r.kat},${fDur(r.tempoh)},${fW(new Date(r.tamatMs))}\n`;
-  });
-  dl(csv, `keputusan-md-${Date.now()}.csv`, 'text/csv');
-  toast('CSV dimuat turun!', 'ok');
-}
-
-// ============================================================
-// RESET
-// ============================================================
-function tanyaReset() { document.getElementById('modal-reset').classList.add('open'); }
-function tutupModal() { document.getElementById('modal-reset').classList.remove('open'); }
-function doReset() {
-  murid=[]; rekod=[];
-  larian={L12:{s:'idle',mula:null,tamat:null},P12:{s:'idle',mula:null,tamat:null}};
-  cL=0; cP=0;
-  Object.values(timers).forEach(clearInterval);
-  save(); renderMurid(); renderScan(); renderLB(); updateStats();
-  updateKUI('L12'); updateKUI('P12');
-  tutupModal(); clearPreview();
-  toast('Semua data direset.', 'ok');
-}
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-function gp(id, el) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  el.classList.add('active');
-  if (id==='scan') { updateScanBar(); setTimeout(()=>document.getElementById('bib-inp').focus(),100); }
-  if (id==='keputusan') { updateStats(); renderLB(); }
-}
-
-// ============================================================
-// FORMAT HELPERS
-// ============================================================
-function fDur(ms) {
-  const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;
-  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`;
-}
-function fW(d) { return d.toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
-
-// ============================================================
-// TOAST
-// ============================================================
-function toast(msg, t='info') {
-  const c=document.getElementById('toast');
-  const el=document.createElement('div');
-  el.className=`ti ${t==='ok'?'tok':t==='err'?'terr':'tinf'}`;
-  el.textContent=msg; c.appendChild(el);
-  setTimeout(()=>el.remove(),3200);
-}
-
-// ============================================================
-// INIT
-// ============================================================
-function init() {
-  if (apiKey) {
-    document.getElementById('ak-inp').value = apiKey;
-    document.getElementById('ak-st').innerHTML = '<span style="color:var(--accent);">✓ API key tersimpan.</span>';
-  }
-  renderMurid(); renderScan(); renderLB(); updateStats();
-  updateKUI('L12'); updateKUI('P12');
-  ['L12','P12'].forEach(kat => {
-    if (larian[kat].s==='running') { startTimer(kat); document.getElementById(`ct-${kat}`).textContent=fDur(Date.now()-larian[kat].mula); }
-    else if (larian[kat].s==='done'&&larian[kat].tamat) document.getElementById(`ct-${kat}`).textContent=fDur(larian[kat].tamat-larian[kat].mula);
-  });
-}
-init();
-</script>
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>
