@@ -160,7 +160,7 @@ export function doImport(rows) {
 
 export function fd(f, el) {
   state.fdAktif = f;
-  document.querySelectorAll('#page-daftar .ftabs:not(#preview-card .ftabs) .ftab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#murid-ftabs .ftab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
   renderMurid();
 }
@@ -221,6 +221,95 @@ Siti Aishah binti Ali,"=""120205201111""",SK Sri Aman,PBB1013,P12,Perempuan
 Muhammad Hafiz,"=""120301301567""",SK Bukit Indah,PBB1014,L12,Lelaki`;
   dl(csv, 'template-merentas-desa.csv', 'text/csv');
   toast('Template dimuat turun!', 'ok');
+}
+
+// ── Manual entry modal ────────────────────────────────────────
+export function bukaFormManual() {
+  ['m-nama','m-ic','m-skl','m-kod'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-kat').value = 'L12';
+  document.getElementById('modal-tambah').classList.add('open');
+  setTimeout(() => document.getElementById('m-nama').focus(), 100);
+}
+
+export function tutupFormManual() {
+  document.getElementById('modal-tambah').classList.remove('open');
+}
+
+export function simpanManual() {
+  const nama    = document.getElementById('m-nama').value.trim();
+  const ic      = document.getElementById('m-ic').value.replace(/[^0-9]/g, '');
+  const sekolah = document.getElementById('m-skl').value.trim();
+  const kodSkl  = document.getElementById('m-kod').value.trim().toUpperCase();
+  const kat     = document.getElementById('m-kat').value;
+  const jantina = kat === 'L12' ? 'Lelaki' : 'Perempuan';
+
+  if (!nama)            { toast('Sila isi nama peserta.', 'err'); return; }
+  if (ic.length !== 12) { toast('No. IC mesti 12 digit.', 'err'); return; }
+  if (!sekolah)         { toast('Sila isi nama sekolah.', 'err'); return; }
+  if (!kodSkl)          { toast('Sila isi kod sekolah.', 'err'); return; }
+
+  const dupIC  = state.murid.find(m => m.ic === ic);
+  const status = dupIC ? 'dup' : 'baru';
+  const dupMsg = dupIC ? `IC ada dalam sistem (${dupIC.nombor})` : '';
+
+  doImport([{ nama, ic, sekolah, kodSkl, kat, jantina, status, dupMsg }]);
+  tutupFormManual();
+}
+
+// ── Tab switcher for Langkah 2 upload card ────────────────────
+export function setUploadTab(tab, el) {
+  document.querySelectorAll('#upload-tabs .ftab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('upload-csv-zone').style.display = tab === 'csv'    ? '' : 'none';
+  document.getElementById('upload-tsv-zone').style.display = tab === 'tampal' ? '' : 'none';
+}
+
+// ── Paste-from-Excel (TSV) parser ─────────────────────────────
+export function bacaTSV() {
+  const raw = document.getElementById('tsv-inp').value.trim();
+  if (!raw) { toast('Tiada data untuk diproses.', 'err'); return; }
+
+  const lines     = raw.split('\n').map(l => l.trim()).filter(l => l);
+  // Auto-skip header row if it looks like a header (contains 'nama' or 'ic')
+  const dataLines = (lines[0].toLowerCase().includes('nama') || lines[0].toLowerCase().includes('ic'))
+    ? lines.slice(1) : lines;
+
+  if (!dataLines.length) { toast('Tiada data peserta ditemui.', 'err'); return; }
+
+  state.prevData = [];
+  let invalidCount = 0;
+
+  dataLines.forEach(line => {
+    // Excel clipboard uses tab as delimiter; clipboard preserves full integer — no scientific notation
+    const parts = line.split('\t').map(p => p.trim().replace(/^"|"$/g, ''));
+    if (parts.length < 6 || !parts[0] || !parts[1]) { invalidCount++; return; }
+
+    const nama    = parts[0];
+    const ic      = parts[1].replace(/[^0-9]/g, '');
+    const sekolah = parts[2];
+    const kodSkl  = parts[3].toUpperCase();
+    const kat     = parts[4].toUpperCase().includes('L') ? 'L12' : 'P12';
+    const jantina = parts[5].toLowerCase().includes('p') ? 'Perempuan' : 'Lelaki';
+
+    if (ic.length !== 12) { invalidCount++; return; }
+
+    const dupIC    = state.murid.find(m => m.ic === ic);
+    const dupBatch = state.prevData.find(p => p.ic === ic);
+    let status = 'baru', dupMsg = '';
+    if (dupIC)         { status = 'dup'; dupMsg = `IC ada dalam sistem (${dupIC.nombor})`; }
+    else if (dupBatch) { status = 'dup'; dupMsg = 'IC duplikat dalam data tampal'; }
+
+    state.prevData.push({ nama, ic, sekolah, kodSkl, kat, jantina, status, dupMsg });
+  });
+
+  if (invalidCount > 0) toast(`${invalidCount} baris diabaikan (format tidak sah).`, 'err');
+  if (!state.prevData.length) { toast('Tiada rekod yang boleh diproses.', 'err'); return; }
+
+  renderPreview();
+  document.getElementById('preview-card').style.display = 'block';
+  document.getElementById('upload-info').style.display  = 'block';
+  document.getElementById('upload-info').textContent    = `✓ Data tampal — ${state.prevData.length} rekod dijumpai.`;
+  setStep(2);
 }
 
 export function tanyaReset() { document.getElementById('modal-reset').classList.add('open'); }

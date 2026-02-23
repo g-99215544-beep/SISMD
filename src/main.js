@@ -6,6 +6,8 @@ import {
   fprev, clearPreview, importSemua, importHanya,
   fd, renderMurid, hapus, eksportSenarai,
   tanyaReset, tutupModal, doReset,
+  bukaFormManual, tutupFormManual, simpanManual,
+  setUploadTab, bacaTSV,
 } from './modules/register.js';
 import { mula, tamat, updateKUI, startTimer } from './modules/timer.js';
 import {
@@ -33,6 +35,7 @@ Object.assign(window, {
   fprev, clearPreview, importSemua, importHanya,
   fd, renderMurid, hapus, eksportSenarai,
   tanyaReset, tutupModal, doReset,
+  bukaFormManual, tutupFormManual, simpanManual, setUploadTab, bacaTSV,
   mula, tamat,
   proses, toggleCam, stopCam, tangkap, simpanAK, toggleAK, simpanGS,
   flb, semakSekolah, eksportSekolah, eksportCSV,

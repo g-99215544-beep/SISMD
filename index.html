@@ -27,7 +27,10 @@
 <!-- ================================================================ -->
 <div class="page active" id="page-daftar">
   <div class="ph">Pendaftaran Peserta</div>
-  <div class="ps">Muat turun template CSV → isi maklumat peserta → upload semula. Sistem akan jana nombor series secara automatik.</div>
+  <div class="ps">Muat turun template CSV → isi maklumat peserta → upload semula. Atau tambah terus secara manual atau tampal dari Excel.</div>
+  <div style="margin-bottom:16px;">
+    <button class="btn btn-dark" onclick="bukaFormManual()">➕ Tambah Peserta Manual</button>
+  </div>
 
   <div class="steps" style="margin-bottom:24px;">
     <div class="step active" id="step1">
@@ -58,12 +61,31 @@
     </div>
 
     <div class="card">
-      <div class="cl">📂 Langkah 2 — Upload CSV Yang Telah Diisi</div>
-      <div class="upload-zone" id="uz" ondragover="dragOn(event)" ondragleave="dragOff()" ondrop="dropFile(event)">
-        <input type="file" accept=".csv" id="csv-file" onchange="bacaCSV(event)">
-        <div class="upload-icon">📋</div>
-        <div class="upload-title">Drag &amp; drop CSV di sini</div>
-        <div class="upload-sub">atau klik untuk pilih fail</div>
+      <div class="cl">📂 Langkah 2 — Upload CSV atau Tampal dari Excel</div>
+      <div class="ftabs" id="upload-tabs" style="margin-bottom:12px;">
+        <button class="ftab active" onclick="setUploadTab('csv',this)">📄 Upload CSV</button>
+        <button class="ftab" onclick="setUploadTab('tampal',this)">📋 Tampal dari Excel</button>
+      </div>
+      <div id="upload-csv-zone">
+        <div class="upload-zone" id="uz" ondragover="dragOn(event)" ondragleave="dragOff()" ondrop="dropFile(event)">
+          <input type="file" accept=".csv" id="csv-file" onchange="bacaCSV(event)">
+          <div class="upload-icon">📋</div>
+          <div class="upload-title">Drag &amp; drop CSV di sini</div>
+          <div class="upload-sub">atau klik untuk pilih fail</div>
+        </div>
+      </div>
+      <div id="upload-tsv-zone" style="display:none;">
+        <div style="font-size:0.78rem; color:var(--ink2); margin-bottom:10px; line-height:1.6;">
+          Dalam Excel: <strong style="color:var(--ink);">pilih sel data → Ctrl+C</strong> → tampal di bawah.<br>
+          <span style="color:var(--accent);">✓ Kaedah ini selamat — nombor IC tidak akan rosak.</span>
+        </div>
+        <div style="font-size:0.73rem; color:var(--ink2); margin-bottom:8px; font-family:'JetBrains Mono',monospace;">
+          Susunan lajur: Nama &nbsp;|&nbsp; IC &nbsp;|&nbsp; Sekolah &nbsp;|&nbsp; Kod_Sekolah &nbsp;|&nbsp; Kategori &nbsp;|&nbsp; Jantina
+        </div>
+        <textarea class="inp" id="tsv-inp" rows="7"
+          placeholder="Tampal data dari Excel di sini (Ctrl+V)...&#10;Contoh selepas tampal:&#10;Ahmad Amirul	120105101234	SK Taman Maju	PBB1013	L12	Lelaki&#10;Siti Aishah	120205201111	SK Sri Aman	PBB1013	P12	Perempuan"
+          style="font-family:'JetBrains Mono',monospace; font-size:0.74rem; resize:vertical;"></textarea>
+        <button class="btn btn-green btn-full" onclick="bacaTSV()" style="margin-top:10px;">📋 Proses Data Tampal</button>
       </div>
       <div id="upload-info" style="display:none; margin-top:10px;" class="alert al-g"></div>
     </div>
@@ -105,7 +127,7 @@
         <button class="btn btn-sm btn-ghost" style="color:var(--accent2);" onclick="tanyaReset()">🗑 Reset</button>
       </div>
     </div>
-    <div class="ftabs">
+    <div class="ftabs" id="murid-ftabs">
       <button class="ftab active" onclick="fd('semua',this)">Semua</button>
       <button class="ftab" onclick="fd('L12',this)">L12</button>
       <button class="ftab" onclick="fd('P12',this)">P12</button>
@@ -279,6 +301,28 @@
   <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
     <button class="btn btn-ghost" onclick="eksportCSV()">📥 Eksport CSV</button>
     <button class="btn btn-ghost" onclick="window.print()">🖨 Cetak / PDF</button>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH MANUAL -->
+<div class="modal-bg" id="modal-tambah">
+  <div class="modal" style="max-width:460px;">
+    <h3>➕ Tambah Peserta Manual</h3>
+    <p style="margin:0 0 14px; font-size:0.82rem; color:var(--ink2);">Taip terus — IC tidak akan rosak kerana tidak melalui Excel CSV.</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
+      <input class="inp" id="m-nama" placeholder="Nama Penuh" autocomplete="off">
+      <input class="inp" id="m-ic" placeholder="No. IC (12 digit, tanpa sempang)" maxlength="12" inputmode="numeric" autocomplete="off">
+      <input class="inp" id="m-skl" placeholder="Nama Sekolah" autocomplete="off">
+      <input class="inp" id="m-kod" placeholder="Kod Sekolah (cth: PBB1013)" oninput="this.value=this.value.toUpperCase()" autocomplete="off">
+      <select class="sel" id="m-kat">
+        <option value="L12">L12 — Lelaki</option>
+        <option value="P12">P12 — Perempuan</option>
+      </select>
+    </div>
+    <div class="ma">
+      <button class="btn btn-ghost" onclick="tutupFormManual()">Batal</button>
+      <button class="btn btn-green" onclick="simpanManual()">✅ Tambah Peserta</button>
+    </div>
   </div>
 </div>
 
