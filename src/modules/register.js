@@ -41,7 +41,14 @@ export function prosesFile(file) {
       if (parts.length < 6 || !parts[0] || !parts[1]) return;
 
       const nama    = parts[0];
-      const ic      = parts[1].replace(/[^0-9]/g, '');
+      // Handle IC: strip Excel formula wrapper ="..." if present, then handle
+      // scientific notation (e.g. 1.20105101234E+11) that Excel auto-generates
+      // when a 12-digit number is stored as a numeric cell.
+      let _icRaw = parts[1];
+      if (_icRaw.startsWith('=')) _icRaw = _icRaw.replace(/^="*|"*$/g, '');
+      const ic = /[eE]/.test(_icRaw)
+        ? Math.round(parseFloat(_icRaw)).toString()
+        : _icRaw.replace(/[^0-9]/g, '');
       const sekolah = parts[2];
       const kodSkl  = parts[3].toUpperCase();
       const kat     = parts[4].toUpperCase().includes('L') ? 'L12' : 'P12';
@@ -206,10 +213,12 @@ export function eksportSenarai() {
 }
 
 export function turunTemplate() {
+  // IC values are wrapped with ="..." so Excel treats them as Text cells,
+  // preventing conversion to scientific notation (e.g. 1.20E+11).
   const csv = `Nama,IC,Sekolah,Kod_Sekolah,Kategori,Jantina
-Ahmad Amirul bin Aiman,120105101234,SK Taman Maju,PBB1013,L12,Lelaki
-Siti Aishah binti Ali,120205201111,SK Sri Aman,PBB1013,P12,Perempuan
-Muhammad Hafiz,120301301567,SK Bukit Indah,PBB1014,L12,Lelaki`;
+Ahmad Amirul bin Aiman,"=""120105101234""",SK Taman Maju,PBB1013,L12,Lelaki
+Siti Aishah binti Ali,"=""120205201111""",SK Sri Aman,PBB1013,P12,Perempuan
+Muhammad Hafiz,"=""120301301567""",SK Bukit Indah,PBB1014,L12,Lelaki`;
   dl(csv, 'template-merentas-desa.csv', 'text/csv');
   toast('Template dimuat turun!', 'ok');
 }
