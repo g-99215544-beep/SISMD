@@ -326,3 +326,105 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
   .steps .step-label { display:none; }
   .page { padding:16px 14px; }
 }
+
+/* ── Category radio buttons (Daftar page) ──────────────────── */
+.kat-btn { cursor:pointer; }
+.kat-lbl {
+  display: block;
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink2);
+  transition: all 0.15s;
+  cursor: pointer;
+}
+input[name="d-kat"]:checked + .kat-lbl[data-kat="L12"] {
+  border-color: var(--blue);
+  background: var(--blue-light);
+  color: var(--blue);
+}
+input[name="d-kat"]:checked + .kat-lbl[data-kat="P12"] {
+  border-color: var(--purple);
+  background: var(--purple-light);
+  color: var(--purple);
+}
+
+/* ── Admin panel accordion ───────────────────────────────────── */
+.acc-section {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.acc-hdr {
+  width: 100%;
+  text-align: left;
+  padding: 11px 14px;
+  background: var(--surface2);
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  transition: background 0.15s;
+}
+.acc-hdr:hover { background: var(--surface3); }
+.acc-body {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/* ── BIB print area ──────────────────────────────────────────── */
+.bib-print-area {
+  display: none;
+}
+
+@media print {
+  body > *:not(.bib-print-area) { display: none !important; }
+  .bib-print-area {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    width: 210mm;
+    padding: 10mm;
+    box-sizing: border-box;
+  }
+  .bib-card {
+    border: 2px solid #000;
+    width: 90mm;
+    height: 120mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    padding: 8mm;
+    margin: 2mm;
+  }
+  .bib-num {
+    font-family: 'Bebas Neue', 'Arial Black', sans-serif;
+    font-size: 52pt;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #000;
+    line-height: 1;
+    text-align: center;
+  }
+  .bib-name {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #000;
+    text-align: center;
+    margin-top: 8mm;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.3;
+    max-width: 80mm;
+  }
+}
