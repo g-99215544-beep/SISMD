@@ -13,8 +13,7 @@
 <div class="topbar">
   <div class="logo" onclick="bukaAdmin()" style="cursor:pointer;" title="Admin">Sis<em>MD</em></div>
   <div class="nav">
-    <button class="nb active" onclick="gp('semak',this)">🏫 <span>Semak</span></button>
-    <button class="nb" onclick="gp('daftar',this)">📝 <span>Daftar</span></button>
+    <button class="nb active" onclick="gp('daftar',this)">📝 <span>Daftar</span></button>
     <button class="nb" onclick="gp('kawalan',this)">🏁 <span>Kawalan</span></button>
     <button class="nb" onclick="gp('scan',this)">📷 <span>Scan</span></button>
     <button class="nb" onclick="gp('keputusan',this)">🏆 <span>Keputusan</span></button>
@@ -23,46 +22,30 @@
 <div id="toast"></div>
 
 <!-- ================================================================ -->
-<!-- PAGE: SEMAK (DEFAULT) -->
+<!-- PAGE: DAFTAR (DEFAULT) -->
 <!-- ================================================================ -->
-<div class="page active" id="page-semak">
-  <div class="ph">Semak Penyertaan Sekolah</div>
-  <div class="ps">Guru boleh masukkan kod sekolah untuk semak senarai peserta dan status larian mereka.</div>
-  <div class="lookup-box">
-    <div class="lookup-title">MASUKKAN KOD SEKOLAH</div>
-    <div style="font-size:0.78rem; color:rgba(216,243,220,0.35); margin-bottom:16px;">cth: PBB1013</div>
-    <div class="lookup-row">
-      <input class="lookup-inp" id="kod-inp" placeholder="PBB1013" maxlength="12"
-        oninput="this.value=this.value.toUpperCase()"
-        onkeydown="if(event.key==='Enter')semakSekolah()">
-      <button class="btn btn-green btn-lg" onclick="semakSekolah()">Semak →</button>
-    </div>
-    <div id="lookup-result" class="lookup-result" style="display:none;"></div>
-  </div>
-  <div class="card" id="lookup-table-card" style="display:none; margin-top:16px;">
-    <div class="cl" style="justify-content:space-between;">
-      <span id="lookup-card-title">Senarai Peserta</span>
-      <button class="btn btn-sm btn-ghost" onclick="eksportSekolah()">📥 Eksport CSV</button>
-    </div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>No. Series</th><th>Nama</th><th>IC</th><th>Kategori</th><th>Status Larian</th><th>Ranking</th><th>Masa</th></tr></thead>
-        <tbody id="tb-lookup"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ================================================================ -->
-<!-- PAGE: DAFTAR -->
-<!-- ================================================================ -->
-<div class="page" id="page-daftar">
+<div class="page active" id="page-daftar">
   <div class="ph">Pendaftaran Peserta</div>
-  <div class="ps">Masukkan maklumat sekolah, kemudian daftar peserta satu per satu mengikut kategori.</div>
+  <div class="ps">Masukkan kod sekolah untuk semak atau daftar peserta.</div>
 
-  <!-- Step 1: School info -->
-  <div class="card" id="daftar-skl-form" style="margin-bottom:16px; max-width:520px;">
-    <div class="cl">🏫 Maklumat Sekolah</div>
+  <!-- Step 0: School code lookup -->
+  <div class="card" id="d-lookup-form" style="margin-bottom:16px; max-width:520px;">
+    <div class="cl">🏫 Kod Sekolah</div>
+    <div class="fl">
+      <div>
+        <label class="lbl">Masukkan Kod Sekolah</label>
+        <input class="inp" id="d-lookup-kod" placeholder="PBB1013" maxlength="20"
+          oninput="this.value=this.value.toUpperCase()"
+          onkeydown="if(event.key==='Enter')semakSekolahDaftar()">
+      </div>
+      <button class="btn btn-green btn-full" onclick="semakSekolahDaftar()">Semak &amp; Teruskan →</button>
+    </div>
+  </div>
+
+  <!-- Step 1: New school name (hidden until lookup finds no match) -->
+  <div class="card" id="daftar-skl-form" style="display:none; margin-bottom:16px; max-width:520px;">
+    <div class="cl">🏫 Daftar Sekolah Baru</div>
+    <div style="font-size:0.78rem; color:var(--ink2); margin-bottom:12px;">Kod sekolah ini belum wujud dalam sistem. Sila masukkan nama sekolah untuk mendaftar.</div>
     <div class="fl">
       <div>
         <label class="lbl">Kod Sekolah</label>
@@ -76,11 +59,14 @@
           oninput="this.value=this.value.toUpperCase()"
           onkeydown="if(event.key==='Enter')simpanSekolah()">
       </div>
-      <button class="btn btn-green btn-full" onclick="simpanSekolah()">Teruskan → Daftar Peserta</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="tukarSekolah()">← Semak Semula</button>
+        <button class="btn btn-green" style="flex:1;" onclick="simpanSekolah()">Teruskan → Daftar Peserta</button>
+      </div>
     </div>
   </div>
 
-  <!-- Step 2: Per-student form (hidden until school confirmed) -->
+  <!-- Step 2: Student form (hidden until school confirmed) -->
   <div id="daftar-murid-form" style="display:none;">
     <div class="card" style="margin-bottom:16px; max-width:520px;">
       <div class="cl" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
@@ -91,32 +77,40 @@
         </div>
       </div>
 
-      <!-- Category selector -->
-      <div style="display:flex; gap:10px; margin-bottom:14px;">
-        <label class="kat-btn" style="flex:1;">
-          <input type="radio" name="d-kat" value="L12" checked style="display:none;">
-          <span class="kat-lbl" data-kat="L12">🔵 L12 — Lelaki</span>
-        </label>
-        <label class="kat-btn" style="flex:1;">
-          <input type="radio" name="d-kat" value="P12" style="display:none;">
-          <span class="kat-lbl" data-kat="P12">🟣 P12 — Perempuan</span>
-        </label>
+      <!-- Registration closed message -->
+      <div id="reg-closed-msg" style="display:none;" class="alert al-a">
+        🔒 Pendaftaran ditutup oleh admin. Tiada penambahan atau pemadaman dibenarkan.
       </div>
 
-      <div class="fl">
-        <div>
-          <label class="lbl">Nama Penuh</label>
-          <input class="inp" id="d-mnama" placeholder="Nama peserta" autocomplete="off"
-            onkeydown="if(event.key==='Enter')document.getElementById('d-mic').focus()">
+      <!-- Add form (hidden when registration closed) -->
+      <div id="daftar-add-form">
+        <!-- Category selector -->
+        <div style="display:flex; gap:10px; margin-bottom:14px;">
+          <label class="kat-btn" style="flex:1;">
+            <input type="radio" name="d-kat" value="L12" checked style="display:none;">
+            <span class="kat-lbl" data-kat="L12">🔵 L12 — Lelaki</span>
+          </label>
+          <label class="kat-btn" style="flex:1;">
+            <input type="radio" name="d-kat" value="P12" style="display:none;">
+            <span class="kat-lbl" data-kat="P12">🟣 P12 — Perempuan</span>
+          </label>
         </div>
-        <div>
-          <label class="lbl">No. IC (12 digit, tanpa sempang)</label>
-          <input class="inp" id="d-mic" placeholder="120105101234" maxlength="12"
-            inputmode="numeric" autocomplete="off"
-            onkeydown="if(event.key==='Enter')daftarPeserta()">
-          <div style="font-size:0.71rem; color:var(--ink3); margin-top:4px;">Digit terakhir ganjil = Lelaki · Genap = Perempuan</div>
+
+        <div class="fl">
+          <div>
+            <label class="lbl">Nama Penuh</label>
+            <input class="inp" id="d-mnama" placeholder="Nama peserta" autocomplete="off"
+              onkeydown="if(event.key==='Enter')document.getElementById('d-mic').focus()">
+          </div>
+          <div>
+            <label class="lbl">No. IC (12 digit, tanpa sempang)</label>
+            <input class="inp" id="d-mic" placeholder="120105101234" maxlength="12"
+              inputmode="numeric" autocomplete="off"
+              onkeydown="if(event.key==='Enter')daftarPeserta()">
+            <div style="font-size:0.71rem; color:var(--ink3); margin-top:4px;">Digit terakhir ganjil = Lelaki · Genap = Perempuan</div>
+          </div>
+          <button class="btn btn-green btn-full" onclick="daftarPeserta()">✅ Daftar Peserta Ini</button>
         </div>
-        <button class="btn btn-green btn-full" onclick="daftarPeserta()">✅ Daftar Peserta Ini</button>
       </div>
     </div>
   </div>
@@ -137,7 +131,7 @@
       <button class="ftab" onclick="fd('L12',this)">L12</button>
       <button class="ftab" onclick="fd('P12',this)">P12</button>
     </div>
-    <input class="inp" id="cari-inp" placeholder="🔍 Cari nama, IC, sekolah atau kod sekolah..." oninput="renderMurid()" style="margin-bottom:12px;">
+    <input class="inp" id="cari-inp" placeholder="🔍 Cari nama atau IC..." oninput="renderMurid()" style="margin-bottom:12px;">
     <div class="tw">
       <table>
         <thead><tr><th>No. Series</th><th>Nama</th><th>IC</th><th>Sekolah</th><th>Kod</th><th>Kat.</th><th>Status</th><th></th></tr></thead>
@@ -202,8 +196,6 @@
         <button class="btn btn-green" id="btn-cap" onclick="tangkap()" style="display:none;">⚡ Tangkap &amp; Scan AI</button>
         <button class="btn btn-ghost btn-sm" id="btn-stopc" onclick="stopCam()" style="display:none; color:#fafaf8; border-color:rgba(255,255,255,0.2);">✕ Tutup</button>
       </div>
-
-      <!-- Two-step confirm panel (hidden until AI detects a number) -->
       <div id="confirm-panel" style="display:none; background:rgba(82,183,136,0.12); border:1.5px solid #52b788; border-radius:10px; padding:14px; margin:12px 0; text-align:center;">
         <div style="font-size:0.72rem; color:rgba(250,250,248,0.5); margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">AI detect — sahkan sebelum rekod</div>
         <div style="font-size:0.82rem; color:rgba(250,250,248,0.7); margin-bottom:8px;">Nama: <strong id="confirm-nama-disp" style="color:#fafaf8;"></strong></div>
@@ -213,10 +205,9 @@
           <button class="btn btn-green" onclick="sahkan()">✅ Sahkan &amp; Rekod</button>
         </div>
       </div>
-
       <div style="font-size:0.7rem; color:rgba(250,250,248,0.25); letter-spacing:1px; margin-bottom:10px;">— ATAU TAIP MANUAL —</div>
       <div class="bib-row">
-        <input class="bib-inp" id="bib-inp" placeholder="L120045" maxlength="10"
+        <input class="bib-inp" id="bib-inp" placeholder="L0045" maxlength="10"
           oninput="this.value=this.value.toUpperCase()"
           onkeydown="if(event.key==='Enter')proses(this.value)">
         <button class="btn btn-green" onclick="proses(document.getElementById('bib-inp').value)" style="padding:12px 16px;font-size:1.1rem;">→</button>
@@ -271,16 +262,14 @@
   </div>
 </div>
 
-<!-- ================================================================ -->
-<!-- BIB PRINT AREA (hidden; shown only during window.print()) -->
-<!-- ================================================================ -->
+<!-- BIB PRINT AREA -->
 <div id="bib-print-area" class="bib-print-area"></div>
 
 <!-- ================================================================ -->
 <!-- MODAL: ADMIN -->
 <!-- ================================================================ -->
 <div class="modal-bg" id="modal-admin">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal" style="max-width:520px;">
     <h3>🔐 Admin SisMD</h3>
 
     <!-- Login form -->
@@ -296,6 +285,33 @@
 
     <!-- Admin panel -->
     <div id="adm-panel" style="display:none;">
+
+      <!-- Accordion: Registration Status -->
+      <div class="acc-section">
+        <button class="acc-hdr" onclick="toggleAcc('acc-reg')">🔒 Status Pendaftaran</button>
+        <div class="acc-body" id="acc-reg" style="display:none;">
+          <div id="adm-reg-status" style="margin-bottom:10px; font-size:0.82rem;"></div>
+          <button id="btn-toggle-reg" class="btn btn-red btn-sm" onclick="toggleReg()">🔒 Tutup Pendaftaran</button>
+        </div>
+      </div>
+
+      <!-- Accordion: Full Participant List -->
+      <div class="acc-section">
+        <button class="acc-hdr" onclick="toggleAcc('acc-peserta')">📋 Senarai Peserta Berdaftar</button>
+        <div class="acc-body" id="acc-peserta" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+            <span id="adm-jml" class="badge bg-x">0 peserta</span>
+            <button class="btn btn-sm btn-ghost" onclick="eksportAdminCSV()">📥 Eksport CSV</button>
+          </div>
+          <div class="tw">
+            <table>
+              <thead><tr><th>No. Series</th><th>Nama</th><th>IC</th><th>Sekolah</th><th>Kat.</th><th>Status</th><th></th></tr></thead>
+              <tbody id="tb-adm-peserta"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- Accordion: Gemini API Key -->
       <div class="acc-section">
         <button class="acc-hdr" onclick="toggleAcc('acc-gemini')">🔑 Kunci API Gemini</button>
@@ -333,7 +349,7 @@
   </div>
 </div>
 
-<!-- MODAL RESET (standalone — kept for tanyaReset() call from delete button) -->
+<!-- MODAL RESET -->
 <div class="modal-bg" id="modal-reset">
   <div class="modal">
     <h3>⚠️ Reset Semua Data?</h3>

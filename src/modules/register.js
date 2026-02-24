@@ -5,11 +5,30 @@ import { renderScan }        from './scanner.js';
 import { renderLB }          from './leaderboard.js';
 import { updateKUI }         from './timer.js';
 
-// ── Module-level session state (not persisted) ────────────────
+// ── Module-level session state ────────────────────────────────
 let _kodSkl  = '';
 let _namaSkl = '';
 
-// ── School form ───────────────────────────────────────────────
+// ── Step 0: School code lookup ────────────────────────────────
+export function semakSekolahDaftar() {
+  const kod = document.getElementById('d-lookup-kod').value.trim().toUpperCase();
+  if (!kod) { toast('Sila masukkan Kod Sekolah.', 'err'); return; }
+  const match = state.murid.find(m => (m.kodSkl || '').toUpperCase() === kod);
+  if (match) {
+    _kodSkl  = kod;
+    _namaSkl = match.sekolah;
+    _showStudentForm();
+    toast(`Sekolah ${_namaSkl} ditemui.`, 'ok');
+  } else {
+    // New school — show name registration form
+    document.getElementById('d-lookup-form').style.display   = 'none';
+    document.getElementById('daftar-skl-form').style.display = '';
+    document.getElementById('d-kod').value = kod; // pre-fill code
+    setTimeout(() => document.getElementById('d-nama').focus(), 100);
+  }
+}
+
+// ── Step 1: Register new school name ─────────────────────────
 export function simpanSekolah() {
   const kod  = document.getElementById('d-kod').value.trim().toUpperCase();
   const nama = document.getElementById('d-nama').value.trim().toUpperCase();
@@ -17,19 +36,47 @@ export function simpanSekolah() {
   if (!nama) { toast('Sila masukkan Nama Sekolah.', 'err'); return; }
   _kodSkl  = kod;
   _namaSkl = nama;
-  document.getElementById('daftar-skl-form').style.display  = 'none';
-  document.getElementById('daftar-murid-form').style.display = '';
-  document.getElementById('d-skl-badge').textContent = `${_kodSkl} · ${_namaSkl}`;
-  setTimeout(() => document.getElementById('d-mnama').focus(), 100);
+  _showStudentForm();
 }
 
 export function tukarSekolah() {
-  document.getElementById('daftar-skl-form').style.display   = '';
+  _kodSkl = ''; _namaSkl = '';
+  document.getElementById('d-lookup-form').style.display    = '';
+  document.getElementById('daftar-skl-form').style.display  = 'none';
   document.getElementById('daftar-murid-form').style.display = 'none';
+  document.getElementById('d-lookup-kod').value = '';
+  renderMurid();
 }
 
-// ── Per-student registration ──────────────────────────────────
+function _showStudentForm() {
+  document.getElementById('d-lookup-form').style.display    = 'none';
+  document.getElementById('daftar-skl-form').style.display  = 'none';
+  document.getElementById('daftar-murid-form').style.display = '';
+  document.getElementById('d-skl-badge').textContent = `${_kodSkl} · ${_namaSkl}`;
+  _applyRegState();
+  renderMurid();
+}
+
+export function applyRegState() {
+  if (document.getElementById('daftar-murid-form')?.style.display === 'none') return;
+  _applyRegState();
+  renderMurid();
+}
+
+function _applyRegState() {
+  if (state.regOpen) {
+    document.getElementById('daftar-add-form').style.display = '';
+    document.getElementById('reg-closed-msg').style.display  = 'none';
+    setTimeout(() => document.getElementById('d-mnama')?.focus(), 100);
+  } else {
+    document.getElementById('daftar-add-form').style.display = 'none';
+    document.getElementById('reg-closed-msg').style.display  = '';
+  }
+}
+
+// ── Step 2: Register student ──────────────────────────────────
 export function daftarPeserta() {
+  if (!state.regOpen) { toast('Pendaftaran ditutup oleh admin.', 'err'); return; }
   const nama = document.getElementById('d-mnama').value.trim();
   const ic   = document.getElementById('d-mic').value.replace(/[^0-9]/g, '');
   const kat  = document.querySelector('input[name="d-kat"]:checked')?.value || 'L12';
@@ -37,15 +84,13 @@ export function daftarPeserta() {
   if (!nama)            { toast('Sila masukkan nama peserta.', 'err'); return; }
   if (ic.length !== 12) { toast('No. IC mesti tepat 12 digit.', 'err'); return; }
 
-  // IC gender parity check: last digit odd = Lelaki (L12), even = Perempuan (P12)
-  const lastDigit   = parseInt(ic[11]);
-  const icGender    = lastDigit % 2 !== 0 ? 'L12' : 'P12';
-  const jantina     = icGender === 'L12' ? 'Lelaki' : 'Perempuan';
+  const lastDigit = parseInt(ic[11]);
+  const icGender  = lastDigit % 2 !== 0 ? 'L12' : 'P12';
+  const jantina   = icGender === 'L12' ? 'Lelaki' : 'Perempuan';
   if (icGender !== kat) {
     toast(`⚠️ Digit akhir IC (${lastDigit}) tidak sepadan dengan kategori ${kat}. Semak semula.`, 'err');
     return;
   }
-
   if (state.murid.find(m => m.ic === ic)) {
     toast(`IC ${ic} sudah wujud dalam sistem.`, 'err');
     return;
@@ -61,8 +106,6 @@ export function daftarPeserta() {
   save();
   renderMurid();
   updateStats();
-
-  // Reset only name + IC; school and category stay
   document.getElementById('d-mnama').value = '';
   document.getElementById('d-mic').value   = '';
   document.getElementById('d-mnama').focus();
@@ -71,7 +114,9 @@ export function daftarPeserta() {
 
 // ── BIB print ─────────────────────────────────────────────────
 export function cetakBIB() {
-  const data = state.murid;
+  const data = _kodSkl
+    ? state.murid.filter(m => (m.kodSkl || '').toUpperCase() === _kodSkl)
+    : state.murid;
   if (!data.length) { toast('Tiada peserta untuk dicetak.', 'err'); return; }
   _renderBIBPrint(data);
   window.print();
@@ -92,7 +137,7 @@ function _renderBIBPrint(list) {
     </div>`).join('');
 }
 
-// ── Participant list ──────────────────────────────────────────
+// ── Participant list (filtered to current school) ─────────────
 export function fd(f, el) {
   state.fdAktif = f;
   document.querySelectorAll('#murid-ftabs .ftab').forEach(t => t.classList.remove('active'));
@@ -102,17 +147,21 @@ export function fd(f, el) {
 
 export function renderMurid() {
   const cari = (document.getElementById('cari-inp')?.value || '').toLowerCase();
-  let data = state.fdAktif === 'semua' ? state.murid : state.murid.filter(m => m.kat === state.fdAktif);
+  let data = _kodSkl
+    ? state.murid.filter(m => (m.kodSkl || '').toUpperCase() === _kodSkl)
+    : [];
+  if (state.fdAktif !== 'semua') data = data.filter(m => m.kat === state.fdAktif);
   if (cari) data = data.filter(m =>
     m.nama.toLowerCase().includes(cari) ||
-    m.ic.includes(cari) ||
-    m.sekolah.toLowerCase().includes(cari) ||
-    (m.kodSkl || '').toLowerCase().includes(cari)
+    m.ic.includes(cari)
   );
-  document.getElementById('jml').textContent = state.murid.length + ' peserta';
+  const schoolTotal = _kodSkl
+    ? state.murid.filter(m => (m.kodSkl || '').toUpperCase() === _kodSkl).length
+    : 0;
+  document.getElementById('jml').textContent = schoolTotal + ' peserta';
   const tb = document.getElementById('tb-murid');
   if (!data.length) {
-    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--ink2);padding:28px;font-size:0.83rem;">Tiada peserta dijumpai.</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--ink2);padding:28px;font-size:0.83rem;">${_kodSkl ? 'Tiada peserta dijumpai.' : 'Masukkan kod sekolah untuk lihat senarai.'}</td></tr>`;
     return;
   }
   tb.innerHTML = data.map(m => {
@@ -127,30 +176,34 @@ export function renderMurid() {
       <td>${done ? '<span class="badge bg-g">✓ Tamat</span>' : '<span class="badge bg-x">Belum</span>'}</td>
       <td style="display:flex;gap:4px;">
         <button class="btn btn-sm btn-ghost" title="Cetak BIB" onclick="cetakBIBSatu('${esc(m.id)}')">🖨</button>
-        <button class="btn btn-sm btn-ghost" style="color:var(--accent2);" onclick="hapus('${esc(m.id)}')">✕</button>
+        ${state.regOpen ? `<button class="btn btn-sm btn-ghost" style="color:var(--accent2);" onclick="hapus('${esc(m.id)}')">✕</button>` : ''}
       </td>
     </tr>`;
   }).join('');
 }
 
 export function hapus(id) {
+  if (!state.regOpen) { toast('Pendaftaran ditutup. Hubungi admin untuk padam.', 'err'); return; }
   state.murid = state.murid.filter(m => String(m.id) !== String(id));
   save(); renderMurid(); updateStats();
   toast('Peserta dipadam.', 'ok');
 }
 
 export function eksportSenarai() {
-  if (!state.murid.length) { toast('Tiada data.', 'err'); return; }
+  const data = _kodSkl
+    ? state.murid.filter(m => (m.kodSkl || '').toUpperCase() === _kodSkl)
+    : state.murid;
+  if (!data.length) { toast('Tiada data.', 'err'); return; }
   let csv = 'No Series,Nama,IC,Sekolah,Kod Sekolah,Kategori,Jantina,Status Larian\n';
-  state.murid.forEach(m => {
+  data.forEach(m => {
     const done = state.rekod.find(r => r.nombor === m.nombor);
     csv += `"${m.nombor}","${m.nama}","${m.ic}","${m.sekolah}","${m.kodSkl||''}",${m.kat},${m.jantina},"${done?'Tamat':'Belum'}"\n`;
   });
-  dl(csv, `senarai-peserta-${Date.now()}.csv`, 'text/csv');
+  dl(csv, `senarai-${_kodSkl || 'semua'}-${Date.now()}.csv`, 'text/csv');
   toast('Senarai dieksport!', 'ok');
 }
 
-// ── Reset (called by admin panel via global window.doReset) ───
+// ── Reset ─────────────────────────────────────────────────────
 export function tanyaReset() { document.getElementById('modal-reset').classList.add('open'); }
 export function tutupModal()  { document.getElementById('modal-reset').classList.remove('open'); }
 
@@ -166,7 +219,9 @@ export function doReset() {
   updateKUI('L12'); updateKUI('P12');
   tutupModal();
   _kodSkl = ''; _namaSkl = '';
-  document.getElementById('daftar-skl-form').style.display   = '';
+  document.getElementById('d-lookup-form').style.display    = '';
+  document.getElementById('daftar-skl-form').style.display  = 'none';
   document.getElementById('daftar-murid-form').style.display = 'none';
+  document.getElementById('d-lookup-kod').value = '';
   toast('Semua data direset.', 'ok');
 }

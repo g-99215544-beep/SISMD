@@ -2,10 +2,10 @@ import './style.css';
 import { state, initFirebaseListeners } from './store.js';
 import { fDur }                         from './modules/utils.js';
 import {
-  simpanSekolah, tukarSekolah, daftarPeserta,
+  semakSekolahDaftar, simpanSekolah, tukarSekolah, daftarPeserta,
   fd, renderMurid, hapus, eksportSenarai,
   tanyaReset, tutupModal, doReset,
-  cetakBIB, cetakBIBSatu,
+  cetakBIB, cetakBIBSatu, applyRegState,
 } from './modules/register.js';
 import { mula, tamat, updateKUI, startTimer } from './modules/timer.js';
 import {
@@ -20,6 +20,7 @@ import {
 import {
   bukaAdmin, tutupAdmin, loginAdmin, logoutAdmin,
   toggleAcc, simpanGeminiKey, simpanGSUrl,
+  toggleReg, renderAdminPeserta, hapusAdmin, eksportAdminCSV,
 } from './modules/admin.js';
 
 function gp(id, el) {
@@ -33,7 +34,7 @@ function gp(id, el) {
 
 Object.assign(window, {
   gp,
-  simpanSekolah, tukarSekolah, daftarPeserta,
+  semakSekolahDaftar, simpanSekolah, tukarSekolah, daftarPeserta,
   fd, renderMurid, hapus, eksportSenarai,
   tanyaReset, tutupModal, doReset,
   cetakBIB, cetakBIBSatu,
@@ -43,6 +44,7 @@ Object.assign(window, {
   flb, semakSekolah, eksportSekolah, eksportCSV,
   bukaAdmin, tutupAdmin, loginAdmin, logoutAdmin,
   toggleAcc, simpanGeminiKey, simpanGSUrl,
+  toggleReg, renderAdminPeserta, hapusAdmin, eksportAdminCSV,
 });
 
 function init() {
@@ -64,6 +66,7 @@ function init() {
     renderLB,
     updateStats,
     updateKUI,
+    onConfigChange: applyRegState,
   });
 
   window.addEventListener('beforeunload', () => {

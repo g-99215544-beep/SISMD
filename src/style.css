@@ -428,3 +428,8 @@ input[name="d-kat"]:checked + .kat-lbl[data-kat="P12"] {
     max-width: 125mm;
   }
 }
+
+/* ── Registration closed notice ─────────────────────────────── */
+#reg-closed-msg {
+  margin-bottom: 0;
+}
