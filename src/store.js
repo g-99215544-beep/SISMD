@@ -11,6 +11,7 @@ export const state = {
   cP: parseInt(localStorage.getItem('md3_cP') || '0'),
   geminiKey:     '',   // loaded from Firebase /config
   gsUrl:         '',   // loaded from Firebase /config
+  regOpen:       true, // loaded from Firebase /config
   fdAktif:       'semua',
   flbAktif:      'semua',
   prevData:      [],
@@ -128,6 +129,8 @@ export function initFirebaseListeners(callbacks) {
     if (!snap.val()) return;
     state.geminiKey = snap.val().geminiKey || '';
     state.gsUrl     = snap.val().gsUrl     || '';
+    state.regOpen   = snap.val().regOpen !== false; // default true if not set
+    _renderCallbacks?.onConfigChange?.();
   });
 }
 
