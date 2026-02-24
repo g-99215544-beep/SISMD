@@ -16,6 +16,7 @@ let _autoScanTimer = null;
 let _isCapturing = false;
 let _lastDetectedBib = '';
 let _lastDetectedAt = 0;
+let _darkFrameCount = 0;
 
 export function updateScanBar() {
   const bar = document.getElementById('scan-bar');
@@ -137,10 +138,15 @@ export async function toggleCam() {
   }
 
   try {
-    state.camStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 } },
-    });
-    document.getElementById('camv').srcObject = state.camStream;
+    state.camStream = await getBestCameraStream();
+    const camv = document.getElementById('camv');
+    camv.muted = true;
+    camv.autoplay = true;
+    camv.setAttribute('playsinline', '');
+    camv.setAttribute('webkit-playsinline', '');
+    camv.srcObject = state.camStream;
+    await camv.play().catch(() => {});
+    await waitVideoReady(camv);
     document.getElementById('cam-wrap').classList.add('on');
     document.getElementById('btn-cam').textContent = 'Kamera Aktif';
     document.getElementById('btn-stopc').style.display = 'inline-flex';
@@ -157,6 +163,7 @@ export function stopCam() {
     state.camStream = null;
   }
   _stopAutoScan();
+  _darkFrameCount = 0;
   document.getElementById('camv').srcObject = null;
   document.getElementById('cam-wrap').classList.remove('on');
   document.getElementById('btn-cam').textContent = 'Buka Kamera AI';
@@ -181,7 +188,36 @@ export async function tangkap() {
     const c = document.createElement('canvas');
     c.width = v.videoWidth;
     c.height = v.videoHeight;
-    c.getContext('2d').drawImage(v, 0, 0);
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    if (!ctx) {
+      setAI('err', 'Kamera tidak dapat diproses pada peranti ini.');
+      return;
+    }
+    ctx.drawImage(v, 0, 0);
+
+    // Boost mobile frames to reduce underexposed/too-dark capture issues.
+    const frame = ctx.getImageData(0, 0, c.width, c.height);
+    const px = frame.data;
+    let sum = 0;
+    for (let i = 0; i < px.length; i += 4) {
+      const boosted = Math.min(255, Math.round(px[i] * 1.2 + 12));
+      const boostedG = Math.min(255, Math.round(px[i + 1] * 1.2 + 12));
+      const boostedB = Math.min(255, Math.round(px[i + 2] * 1.2 + 12));
+      px[i] = boosted;
+      px[i + 1] = boostedG;
+      px[i + 2] = boostedB;
+      sum += (boosted + boostedG + boostedB) / 3;
+    }
+    const avg = sum / (px.length / 4);
+    if (avg < 18) {
+      _darkFrameCount += 1;
+      if (_darkFrameCount >= 3) {
+        setAI('err', 'Kamera terlalu gelap. Cuba naikkan cahaya atau tukar kamera.');
+      }
+      return;
+    }
+    _darkFrameCount = 0;
+    ctx.putImageData(frame, 0, 0);
     const b64 = c.toDataURL('image/jpeg', 0.85).split(',')[1];
 
     setAI('think', 'AI sedang membaca nombor bib...');
@@ -274,6 +310,43 @@ function _stopAutoScan() {
     _autoScanTimer = null;
   }
   _isCapturing = false;
+}
+
+async function getBestCameraStream() {
+  const constraintsCandidates = [
+    { video: { facingMode: { exact: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+    { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+    { video: { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+    { video: true, audio: false },
+  ];
+
+  let lastErr = null;
+  for (const constraints of constraintsCandidates) {
+    try {
+      return await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error('Tidak dapat akses kamera.');
+}
+
+function waitVideoReady(videoEl, timeoutMs = 2500) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const timer = setInterval(() => {
+      const ready = videoEl.readyState >= 2 && videoEl.videoWidth > 0 && videoEl.videoHeight > 0;
+      if (ready) {
+        clearInterval(timer);
+        resolve();
+        return;
+      }
+      if (Date.now() - start > timeoutMs) {
+        clearInterval(timer);
+        reject(new Error('Pratonton kamera lambat/gelap.'));
+      }
+    }, 120);
+  });
 }
 
 async function requestGeminiBIB(b64) {
