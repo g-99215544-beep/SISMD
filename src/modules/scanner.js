@@ -11,7 +11,7 @@ const AUTO_SCAN_INTERVAL_MS = 1800;
 const AUTO_DETECT_COOLDOWN_MS = 4500;
 
 // Module-level pending confirmation state
-let _pending = null; // { nombor, nama } | null
+let _pending = null; // { nombor, nama, sekolah, kat } | null
 let _autoScanTimer = null;
 let _isCapturing = false;
 let _lastDetectedBib = '';
@@ -161,6 +161,9 @@ export function stopCam() {
   document.getElementById('cam-wrap').classList.remove('on');
   document.getElementById('btn-cam').textContent = 'Buka Kamera AI';
   document.getElementById('btn-stopc').style.display = 'none';
+  _pending = null;
+  const panel = document.getElementById('confirm-panel');
+  if (panel) panel.style.display = 'none';
   setAI('idle', 'Kamera tidak aktif');
 }
 
@@ -209,8 +212,14 @@ export async function tangkap() {
       return;
     }
 
-    setAI('ok', `Auto detect: ${txt} (${m.nama})`);
-    proses(txt);
+    _pending = {
+      nombor: txt,
+      nama: m.nama,
+      sekolah: m.sekolah,
+      kat: m.kat,
+    };
+    _showConfirm();
+    setAI('ok', `AI detect: ${txt} (${m.nama}). Sahkan untuk rekod.`);
   } catch (e) {
     setAI('err', 'Ralat: ' + e.message);
     toast('Ralat API Gemini: ' + e.message, 'err');
@@ -224,6 +233,8 @@ function _showConfirm() {
   if (!el || !_pending) return;
   document.getElementById('confirm-nombor').value = _pending.nombor;
   document.getElementById('confirm-nama-disp').textContent = _pending.nama;
+  const meta = document.getElementById('confirm-meta-disp');
+  if (meta) meta.textContent = `${_pending.sekolah} · ${_pending.kat}`;
   el.style.display = '';
 }
 
@@ -231,13 +242,14 @@ export function sahkan() {
   const corrected = document.getElementById('confirm-nombor').value.trim().toUpperCase();
   _pending = null;
   document.getElementById('confirm-panel').style.display = 'none';
+  setAI('ready', 'Mengesan nombor bib secara automatik...');
   proses(corrected);
 }
 
 export function batalPending() {
   _pending = null;
   document.getElementById('confirm-panel').style.display = 'none';
-  setAI('idle', 'Dibatalkan. Auto detect diteruskan.');
+  setAI('ready', 'Dibatalkan. Auto detect diteruskan.');
 }
 
 function setAI(s, msg) {

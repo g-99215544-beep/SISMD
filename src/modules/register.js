@@ -4,6 +4,7 @@ import { updateStats }       from './leaderboard.js';
 import { renderScan }        from './scanner.js';
 import { renderLB }          from './leaderboard.js';
 import { updateKUI }         from './timer.js';
+import { isAdminLoggedIn }   from './admin.js';
 
 // ── Module-level session state ────────────────────────────────
 let _kodSkl  = '';
@@ -146,6 +147,7 @@ export function fd(f, el) {
 }
 
 export function renderMurid() {
+  refreshDaftarPrivilegedUI();
   const cari = (document.getElementById('cari-inp')?.value || '').toLowerCase();
   let data = _kodSkl
     ? state.murid.filter(m => (m.kodSkl || '').toUpperCase() === _kodSkl)
@@ -190,6 +192,7 @@ export function hapus(id) {
 }
 
 export function eksportSenarai() {
+  if (!isAdminLoggedIn()) { toast('Hanya admin boleh eksport senarai.', 'err'); return; }
   const data = _kodSkl
     ? state.murid.filter(m => (m.kodSkl || '').toUpperCase() === _kodSkl)
     : state.murid;
@@ -204,10 +207,14 @@ export function eksportSenarai() {
 }
 
 // ── Reset ─────────────────────────────────────────────────────
-export function tanyaReset() { document.getElementById('modal-reset').classList.add('open'); }
+export function tanyaReset() {
+  if (!isAdminLoggedIn()) { toast('Hanya admin boleh reset data.', 'err'); return; }
+  document.getElementById('modal-reset').classList.add('open');
+}
 export function tutupModal()  { document.getElementById('modal-reset').classList.remove('open'); }
 
 export function doReset() {
+  if (!isAdminLoggedIn()) { toast('Hanya admin boleh reset data.', 'err'); return; }
   state.murid  = [];
   state.rekod  = [];
   state.larian = { L12:{s:'idle',mula:null,tamat:null}, P12:{s:'idle',mula:null,tamat:null} };
@@ -224,4 +231,17 @@ export function doReset() {
   document.getElementById('daftar-murid-form').style.display = 'none';
   document.getElementById('d-lookup-kod').value = '';
   toast('Semua data direset.', 'ok');
+}
+
+export function refreshDaftarPrivilegedUI() {
+  const isAdmin = isAdminLoggedIn();
+  const btnEksport = document.getElementById('btn-eksport-senarai');
+  const btnReset = document.getElementById('btn-reset-data');
+  const cariInp = document.getElementById('cari-inp');
+  if (btnEksport) btnEksport.style.display = isAdmin ? '' : 'none';
+  if (btnReset) btnReset.style.display = isAdmin ? '' : 'none';
+  if (cariInp) {
+    cariInp.style.display = isAdmin ? '' : 'none';
+    if (!isAdmin) cariInp.value = '';
+  }
 }

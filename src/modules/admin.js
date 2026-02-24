@@ -7,9 +7,13 @@ const ADMIN_PASS    = 'admin123';
 const ADMIN_EXP_KEY = 'md3_admin_exp';
 const SESSION_MS    = 24 * 60 * 60 * 1000;
 
+export function isAdminLoggedIn() {
+  const exp = parseInt(localStorage.getItem(ADMIN_EXP_KEY) || '0', 10);
+  return Date.now() < exp;
+}
+
 export function bukaAdmin() {
-  const exp = parseInt(localStorage.getItem(ADMIN_EXP_KEY) || '0');
-  if (Date.now() < exp) {
+  if (isAdminLoggedIn()) {
     _showPanel();
   } else {
     _showLogin();
@@ -40,11 +44,13 @@ export function loginAdmin() {
   localStorage.setItem(ADMIN_EXP_KEY, Date.now() + SESSION_MS);
   document.getElementById('adm-pass').value = '';
   _showPanel();
+  window.refreshDaftarPrivilegedUI?.();
   toast('Log masuk berjaya!', 'ok');
 }
 
 export function logoutAdmin() {
   localStorage.removeItem(ADMIN_EXP_KEY);
+  window.refreshDaftarPrivilegedUI?.();
   tutupAdmin();
   toast('Log keluar admin.', 'ok');
 }

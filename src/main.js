@@ -5,7 +5,7 @@ import {
   semakSekolahDaftar, simpanSekolah, tukarSekolah, daftarPeserta,
   fd, renderMurid, hapus, eksportSenarai,
   tanyaReset, tutupModal, doReset,
-  cetakBIB, cetakBIBSatu, applyRegState,
+  cetakBIB, cetakBIBSatu, applyRegState, refreshDaftarPrivilegedUI,
 } from './modules/register.js';
 import { mula, tamat, updateKUI, startTimer } from './modules/timer.js';
 import {
@@ -38,6 +38,7 @@ Object.assign(window, {
   fd, renderMurid, hapus, eksportSenarai,
   tanyaReset, tutupModal, doReset,
   cetakBIB, cetakBIBSatu,
+  refreshDaftarPrivilegedUI,
   mula, tamat,
   proses, toggleCam, stopCam, tangkap,
   sahkan, batalPending,
@@ -48,6 +49,7 @@ Object.assign(window, {
 });
 
 function init() {
+  refreshDaftarPrivilegedUI();
   renderMurid(); renderScan(); renderLB(); updateStats();
   updateKUI('L12'); updateKUI('P12');
   ['L12', 'P12'].forEach(kat => {
