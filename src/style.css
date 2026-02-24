@@ -254,7 +254,14 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
 .cam-wrap.on { display:block; }
 #camv { width:100%; height:100%; object-fit:cover; display:block; filter:brightness(1.15) contrast(1.05); }
 .cam-ov { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-.cam-fr { width:200px; height:72px; border:2.5px solid #52b788; border-radius:6px; box-shadow:0 0 0 2000px rgba(0,0,0,0.55); position:relative; }
+.cam-fr {
+  width: min(88%, 320px);
+  height: min(38vw, 128px);
+  border: 2.5px solid #52b788;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2000px rgba(0,0,0,0.55);
+  position: relative;
+}
 .cam-fr::before,.cam-fr::after { content:''; position:absolute; width:16px; height:16px; border-color:#52b788; border-style:solid; }
 .cam-fr::before { top:-2px; left:-2px; border-width:3px 0 0 3px; }
 .cam-fr::after { bottom:-2px; right:-2px; border-width:0 3px 3px 0; }
@@ -325,6 +332,10 @@ tr.dup td:first-child { border-left:3px solid var(--accent2); }
   .nb span { display:none; }
   .steps .step-label { display:none; }
   .page { padding:16px 14px; }
+  .cam-fr {
+    width: min(92%, 340px);
+    height: min(40vw, 140px);
+  }
 }
 
 /* ── Category radio buttons (Daftar page) ──────────────────── */
